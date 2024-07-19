@@ -1,0 +1,43 @@
+{
+  "id": "1.2.298",
+  "membership_expiration_date": "2106-02-07T06:28:15",
+  "registrar": "1.2.298",
+  "referrer": "1.2.298",
+  "lifetime_referrer": "1.2.298",
+  "network_fee_percentage": 2000,
+  "lifetime_referrer_fee_percentage": 8000,
+  "referrer_rewards_percentage": 0,
+  "name": "nathan",
+  "owner": {
+    "weight_threshold": 1,
+    "account_auths": [],
+    "key_auths": [["BTS7T2swLv3QqBAzP1hByB5khUjNFEahtp1fYEHL2GFubMvNGVXyG", 1]],
+    "address_auths": []
+  },
+  "active": {
+    "weight_threshold": 1,
+    "account_auths": [],
+    "key_auths": [["BTS7T2swLv3QqBAzP1hByB5khUjNFEahtp1fYEHL2GFubMvNGVXyG", 1]],
+    "address_auths": []
+  },
+  "options": {
+    "memo_key": "BTS7T2swLv3QqBAzP1hByB5khUjNFEahtp1fYEHL2GFubMvNGVXyG",
+    "voting_account": "1.2.5",
+    "num_witness": 0,
+    "num_committee": 0,
+    "votes": [],
+    "extensions": []
+  },
+  "num_committee_voted": 0,
+  "statistics": "2.6.298",
+  "whitelisting_accounts": [],
+  "blacklisting_accounts": [],
+  "whitelisted_accounts": [],
+  "blacklisted_accounts": [],
+  "cashback_vb": "1.13.121",
+  "owner_special_authority": [0, {}],
+  "active_special_authority": [0, {}],
+  "top_n_control_flags": 0,
+  "creation_block_num": 0,
+  "creation_time": "2015-10-13T13:00:00"
+}
