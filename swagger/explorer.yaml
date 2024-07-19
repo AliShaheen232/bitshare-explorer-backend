@@ -1,0 +1,76 @@
+paths:
+  /api/block/{blockNum}:
+    get:
+      summary: Retrieve block data
+      description: Retrieve block data by block number
+      parameters:
+        - in: path
+          name: blockNum
+          required: true
+          description: Numeric ID of the block to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Block data
+        500:
+          description: Server error
+  /api/account/{accountName}:
+    get:
+      summary: Retrieve account data
+      description: Retrieve account data by account name
+      parameters:
+        - in: path
+          name: accountName
+          required: true
+          description: Name of the account to retrieve
+          schema:
+            type: string
+      responses:
+        200:
+          description: Account data
+        500:
+          description: Server error
+  /api/chain_id:
+    get:
+      summary: Retrieve chain ID
+      description: Retrieve the chain ID of the blockchain
+      responses:
+        200:
+          description: Chain ID
+        500:
+          description: Server error
+  /api/latest_block:
+    get:
+      summary: Retrieve the latest block data
+      description: Retrieve the data of the latest block on the blockchain
+      responses:
+        200:
+          description: Latest block data
+        500:
+          description: Server error
+  /api/transaction/{transactionHash}:
+    get:
+      summary: Retrieve transaction data
+      description: Retrieve transaction data by transaction hash
+      parameters:
+        - in: path
+          name: transactionHash
+          required: true
+          description: Hash of the transaction to retrieve
+          schema:
+            type: string
+      responses:
+        200:
+          description: Transaction data
+        500:
+          description: Server error
+  /api/account/accountCount:
+    get:
+      summary: Total number of registered accounts
+      description: Get the total number of accounts registered with the blockchain
+      responses:
+        200:
+          description: Accounts count
+        500:
+          description: Server error

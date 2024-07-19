@@ -1,0 +1,24 @@
+{
+  "account": {
+    "account_id": "",
+    "name": "",
+    "data": {}
+  },
+  "block": {
+    "blockNumber": 0,
+    "previous": "",
+    "witness": "",
+    "witness_signature": "",
+    "transaction_merkle_root": "",
+    "transaction_count": 0,
+    "timestamp": ""
+  },
+  "transaction": {
+    "ref_block_num": 0,
+    "ref_block_prefix": 0,
+    "expiration": 0,
+    "signatures": [],
+    "operations_count": 0,
+    "operations": []
+  }
+}
