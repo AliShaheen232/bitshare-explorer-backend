@@ -21,6 +21,7 @@
     "kafka-node": "^5.0.0",
     "mongoose": "^8.5.0",
     "path": "^0.12.7",
+    "pm2": "^5.4.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   }

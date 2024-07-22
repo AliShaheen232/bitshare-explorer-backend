@@ -3,6 +3,7 @@ const { Apis } = require("bitsharesjs-ws");
 const connectDB = require("../db");
 const { updateBlockEntry } = require("../helper/apiHelper");
 const fs = require("fs");
+const Block = require("../models/Block");
 const path = require("path");
 
 connectDB();
@@ -31,23 +32,6 @@ const heighestBlock = async () => {
     return _heighestBlock[0].blockNumber;
   }
   return 0;
-};
-
-const indexer = async () => {
-  try {
-    logInfo(`DB syncing started`);
-    await initializeWebSocket();
-
-    await indexing();
-
-    await findMissing();
-
-    logInfo(`DB syncing completed`);
-  } catch (error) {
-    // Log any errors that occur
-    logError(`Error in indexer function: ${error.message}`);
-    indexer();
-  }
 };
 
 const latestBlock = async () => {
@@ -105,6 +89,23 @@ const indexing = async () => {
       await delay(0);
     }
     logInfo(`Initial loop ends: ${_heighestBlock}`);
+  } catch (error) {
+    logError(`Error in indexing: ${error.message}`);
+  }
+};
+
+const blockindexer = async () => {
+  try {
+    logInfo(`DB syncing started`);
+    await initializeWebSocket();
+
+    await indexing();
+
+    await findMissing();
+
+    logInfo(`DB syncing completed`);
+
+    logInfo(`Updating DB with new blocks`);
 
     setInterval(async () => {
       try {
@@ -122,7 +123,9 @@ const indexing = async () => {
       }
     }, 100);
   } catch (error) {
-    logError(`Error in indexing: ${error.message}`);
+    // Log any errors that occur
+    logError(`Error in indexer function: ${error.message}`);
+    indexer();
   }
 };
 
@@ -153,5 +156,5 @@ const findMissing = async () => {
   }
 };
 
-// module.exports = indexer;
-indexer();
+module.exports = blockindexer;
+// blockindexer();

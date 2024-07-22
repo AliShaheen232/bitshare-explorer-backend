@@ -35,8 +35,8 @@ app.get("/", (req, res) => {
 
 app.set("port", port);
 
-app.listen(port, () => {
-  console.log(`BitShares Explorer backend listening at http://0.0.0.0:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`BitShares Explorer backend listening at http://0.0.0.0:${port}`);
+// });
 
-// module.exports = app;
+module.exports = app;
