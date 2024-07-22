@@ -1,0 +1,12 @@
+[2024-07-21T09:47:10.058Z] INFO: DB syncing started
+[2024-07-21T09:47:11.558Z] ERROR: Error in indexing: Block is not defined
+[2024-07-21T09:47:11.558Z] ERROR: Error in findMissing: Block is not defined
+[2024-07-21T09:47:11.558Z] INFO: DB syncing completed
+[2024-07-21T09:59:53.060Z] INFO: DB syncing started
+[2024-07-21T09:59:55.160Z] ERROR: Error in indexing: Block is not defined
+[2024-07-21T09:59:55.160Z] ERROR: Error in findMissing: Block is not defined
+[2024-07-21T09:59:55.160Z] INFO: DB syncing completed
+[2024-07-21T10:00:52.795Z] INFO: DB syncing started
+[2024-07-21T10:00:54.652Z] ERROR: Error in indexing: Block is not defined
+[2024-07-21T10:00:54.652Z] ERROR: Error in findMissing: Block is not defined
+[2024-07-21T10:00:54.652Z] INFO: DB syncing completed

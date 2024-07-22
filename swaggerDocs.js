@@ -3,6 +3,7 @@
  * /api/identify/{input}:
  *   get:
  *     summary: Retrieve Block number, Transaction hash, Account ID, or Account name data
+ *     tags: [Global]
  *     description: Get Block number, Transaction hash, Account ID, or Account name data within blockchain
  *     parameters:
  *       - in: path
@@ -22,6 +23,7 @@
  * /api/account/accountCount:
  *   get:
  *     summary: Total number of registered accounts
+ *     tags: [Accounts]
  *     description: Get the total number of accounts registered within the blockchain
  *     responses:
  *       200:
@@ -34,6 +36,7 @@
  * /api/account/{accountIdent}:
  *   get:
  *     summary: Retrieve account data
+ *     tags: [Accounts]
  *     description: Retrieve account data by account name
  *     parameters:
  *       - in: path
@@ -48,30 +51,96 @@
  *       500:
  *         description: Server error
  */
-// /**
-//  * @swagger
-//  * /api/account/{accountRef}:
-//  *   get:
-//  *     summary: Retrieve account data
-//  *     description: Retrieve account data by account references
-//  *     parameters:
-//  *       - in: path
-//  *         name: accountRef
-//  *         required: true
-//  *         description: Name of the account to retrieve
-//  *         schema:
-//  *           type: string
-//  *     responses:
-//  *       200:
-//  *         description: Account data
-//  *       500:
-//  *         description: Server error
-//  */
+/**
+ * @swagger
+ * /api/accounts:
+ *   get:
+ *     summary: Retrieve a list of accounts with pagination
+ *     tags: [Accounts]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *         description: The number of accounts to retrieve per page
+ *     responses:
+ *       200:
+ *         description: A paginated list of accounts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   account_id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   data:
+ *                     type: object
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
+ * /api/blocks:
+ *   get:
+ *     summary: Retrieve a list of blocks with pagination
+ *     tags: [Blocks]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *         description: The number of blocks to retrieve per page
+ *     responses:
+ *       200:
+ *         description: A paginated list of blocks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   blockNumber:
+ *                     type: integer
+ *                   previous:
+ *                     type: string
+ *                   witness:
+ *                     type: string
+ *                   witness_signature:
+ *                     type: string
+ *                   transaction_merkle_root:
+ *                     type: string
+ *                   transaction_count:
+ *                     type: integer
+ *                   timestamp:
+ *                     type: string
+ *       500:
+ *         description: Server error
+ */
 /**
  * @swagger
  * /api/block/{blockNum}:
  *   get:
  *     summary: Retrieve block data
+ *     tags: [Blocks]
  *     description: Retrieve block data by block number
  *     parameters:
  *       - in : path
@@ -91,6 +160,7 @@
  * /api/chainID:
  *   get:
  *     summary: Get chain ID
+ *     tags: [Global]
  *     description: Retrieve the chain ID of the blockchain
  *     responses:
  *       200:
@@ -103,6 +173,7 @@
  * /api/config:
  *   get:
  *     summary: Retrieve the config.
+ *     tags: [Global]
  *     description: Retrieve the config
  *     responses:
  *       200:
@@ -115,6 +186,7 @@
  * /api/globalProperties:
  *   get:
  *     summary: Retrieve the current global property object.
+ *     tags: [Global]
  *     description: Retrieve the current global property object
  *     responses:
  *       200:
@@ -127,6 +199,7 @@
  * /api/latestBlock:
  *   get:
  *     summary: Retrieve block data
+ *     tags: [Blocks]
  *     description: Retrieve block data by block number
 
  *     responses:
@@ -140,6 +213,7 @@
  * /api/txs/{blockNum}:
  *   get:
  *     summary: Retrieve transactions from block
+ *     tags: [Transactions]
  *     description: Retrieve transaction data by block number
  *     parameters:
  *       - in : path
@@ -159,6 +233,7 @@
  * /api/tx/{transaction}:
  *   get:
  *     summary: Retrieve transaction
+ *     tags: [Transactions]
  *     description: Retrieve transaction data by transaction hash
  *     parameters:
  *       - in : path

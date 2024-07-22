@@ -1,4 +1,5 @@
 const server = require("./server");
+const blockIndexer = require("./indexer/blockIndexer");
 
 const startServer = () => {
   server.listen(server.get("port"), () => {
@@ -10,4 +11,5 @@ const startServer = () => {
   });
 };
 
+blockIndexer();
 startServer();

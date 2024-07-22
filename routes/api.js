@@ -6,6 +6,8 @@ const {
   updateBlockEntry,
   updateTransactionEntry,
   updateAccountEntry,
+  getPaginatedBlocks,
+  getPaginatedAccounts,
 } = require("../helper/apiHelper");
 
 const router = express.Router();
@@ -18,6 +20,18 @@ router.get("/block/:blockNum", async (req, res) => {
 
     const block = await _updateBlockEntry(blockNumber);
     res.json(block);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/blocks", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 25;
+
+    const blocks = await getPaginatedBlocks(page, limit);
+    res.json(blocks);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -87,6 +101,18 @@ router.get("/account/accountCount", async (req, res) => {
     }
 
     res.json(accountCount);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/accounts", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 25;
+
+    const accounts = await getPaginatedAccounts(page, limit);
+    res.json(accounts);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -172,6 +198,18 @@ router.get("/identify/:input", async (req, res) => {
   }
 });
 
+router.get("/accounts/:lowerBoundName", async (req, res) => {
+  const lowerBoundName = req.params.lowerBoundName; // Start with an empty string to get all accounts
+  const limit = 10; // Maximum number of results to return
+  const result = await Apis.instance()
+    .db_api()
+    .exec("lookup_accounts", [lowerBoundName, limit]);
+
+  // Call the lookup_accounts API method
+  console.log(result);
+  return res.json(result);
+});
+
 const identifyInput = async (input) => {
   input = input.trim();
 
@@ -202,9 +240,7 @@ const identifyInput = async (input) => {
 };
 
 const _updateBlockEntry = async (blockNumber) => {
-  let block = await Apis.instance().db_api().exec("get_block", [blockNumber]);
-  block = { blockNumber, ...block };
-  return await updateBlockEntry(block);
+  return await updateBlockEntry(blockNumber);
 };
 
 const _updateTransactionEntry = async (transaction) => {
@@ -214,18 +250,6 @@ const _updateTransactionEntry = async (transaction) => {
 const _updateAccountEntry = async (account) => {
   return await updateAccountEntry(account);
 };
-
-router.get("/accounts/:lowerBoundName", async (req, res) => {
-  const lowerBoundName = req.params.lowerBoundName; // Start with an empty string to get all accounts
-  const limit = 10; // Maximum number of results to return
-  const result = await Apis.instance()
-    .db_api()
-    .exec("lookup_accounts", [lowerBoundName, limit]);
-
-  // Call the lookup_accounts API method
-  console.log(result);
-  return res.json(result);
-});
 
 module.exports = router;
 

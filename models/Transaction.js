@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const TransactionSchema = new mongoose.Schema({
-  // blockNumber: { type: Number, required: true },
+  blockNumber: { type: Number, required: false },
   ref_block_num: { type: Number, required: true },
   ref_block_prefix: { type: Number, required: true },
   expiration: { type: String, required: true },
