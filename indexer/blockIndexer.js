@@ -76,7 +76,6 @@ const indexing = async () => {
 
     let _headBlockNumber = await latestBlock();
     let _heighestBlock = await heighestBlock();
-    let _lastBlockNumber = 0;
 
     console.log(
       `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
@@ -96,6 +95,8 @@ const indexing = async () => {
 
 const blockIndexer = async () => {
   try {
+    let _lastBlockNumber = 0;
+
     logInfo(`DB syncing started`);
     await initializeWebSocket();
 
@@ -121,7 +122,7 @@ const blockIndexer = async () => {
       } catch (error) {
         logError(`Error in setInterval: ${error.message}`);
       }
-    }, 100);
+    }, 0);
   } catch (error) {
     // Log any errors that occur
     logError(`Error in indexer function: ${error.message}`);
@@ -149,7 +150,7 @@ const findMissing = async () => {
       }
       existingBlock = await Block.findOne({ blockNumber });
 
-      await delay(100);
+      await delay(50);
     }
   } catch (error) {
     logError(`Error in findMissing: ${error.message}`);
