@@ -94,7 +94,7 @@ const indexing = async () => {
   }
 };
 
-const blockindexer = async () => {
+const blockIndexer = async () => {
   try {
     logInfo(`DB syncing started`);
     await initializeWebSocket();
@@ -156,5 +156,5 @@ const findMissing = async () => {
   }
 };
 
-module.exports = blockindexer;
-// blockindexer();
+module.exports = blockIndexer;
+// blockIndexer();
