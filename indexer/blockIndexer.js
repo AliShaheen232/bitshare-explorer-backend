@@ -157,5 +157,5 @@ const findMissing = async () => {
   }
 };
 
-module.exports = blockIndexer;
-// blockIndexer();
+// module.exports = blockIndexer;
+blockIndexer();
