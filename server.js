@@ -7,6 +7,9 @@ const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 3001;
 
+// Enable CORS for all routes
+app.use(cors());
+
 let nodeRes;
 
 // const localNode = "ws://18.184.52.99:8091";
