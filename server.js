@@ -3,6 +3,7 @@ const { Apis } = require("bitsharesjs-ws");
 const apiRoutes = require("./routes/api");
 const { swaggerUi, swaggerDocs } = require("./swagger");
 const app = express();
+const cors = require("cors"); // Import the cors middleware
 
 require("dotenv").config();
 const port = process.env.PORT || 3001;
