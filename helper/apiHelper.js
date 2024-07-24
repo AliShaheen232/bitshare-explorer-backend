@@ -164,13 +164,35 @@ const refineBlock = (blockObj) => {
 const getPaginatedBlocks = async (page, limit) => {
   const skip = (page - 1) * limit;
   const blocks = await Block.find().skip(skip).limit(limit).exec();
-  return blocks;
+  const pagBlockObject = {
+    page,
+    count: await Block.countDocuments(),
+    blocks,
+  };
+
+  return pagBlockObject;
+};
+
+const getPaginatedTransactions = async (page, limit) => {
+  const skip = (page - 1) * limit;
+  const txs = await Transaction.find().skip(skip).limit(limit).exec();
+  const pagTXObject = {
+    page,
+    count: await Transaction.countDocuments(),
+    txs,
+  };
+  return pagTXObject;
 };
 
 const getPaginatedAccounts = async (page, limit) => {
   const skip = (page - 1) * limit;
   const accounts = await Account.find().skip(skip).limit(limit);
-  return accounts;
+  const pagAccountObject = {
+    page,
+    count: await Account.countDocuments(),
+    accounts,
+  };
+  return pagAccountObject;
 };
 
 module.exports = {
@@ -178,5 +200,6 @@ module.exports = {
   updateTransactionEntry,
   updateAccountEntry,
   getPaginatedBlocks,
+  getPaginatedTransactions,
   getPaginatedAccounts,
 };

@@ -248,3 +248,85 @@
  *       500:
  *         description: Server error
  */
+/**
+ * @swagger
+ * /api/stat:
+ *   get:
+ *     summary: Retrieve various blockchain statistics
+ *     tags: [Global]
+ *     responses:
+ *       200:
+ *         description: A JSON object containing blockchain statistics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 TPS:
+ *                   type: integer
+ *                   description: Transactions per second
+ *                 accountCount:
+ *                   type: integer
+ *                   description: Total number of accounts
+ *                 blocksCount:
+ *                   type: integer
+ *                   description: Total number of blocks
+ *                 transactionsCount:
+ *                   type: integer
+ *                   description: Total number of transactions
+ *                 totalTransafers:
+ *                   type: integer
+ *                   description: Total number of transfers
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/txs:
+ *   get:
+ *     summary: Retrieve a list of transactions with pagination
+ *     tags: [Transactions]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *         description: The number of transactions to retrieve per page
+ *     responses:
+ *       200:
+ *         description: A paginated list of transactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   transaction_id:
+ *                     type: string
+ *                   block_number:
+ *                     type: integer
+ *                   timestamp:
+ *                     type: string
+ *                     format: date-time
+ *                   sender:
+ *                     type: string
+ *                   receiver:
+ *                     type: string
+ *                   amount:
+ *                     type: number
+ *                   fee:
+ *                     type: number
+ *                   data:
+ *                     type: object
+ *       500:
+ *         description: Server error
+ */

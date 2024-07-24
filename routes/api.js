@@ -7,12 +7,31 @@ const {
   updateTransactionEntry,
   updateAccountEntry,
   getPaginatedBlocks,
+  getPaginatedTransactions,
   getPaginatedAccounts,
 } = require("../helper/apiHelper");
+const Account = require("../models/Account");
+const Transaction = require("../models/Transaction");
+const Block = require("../models/Block");
 
 const router = express.Router();
 
 connectDB();
+
+router.get("/stat", async (req, res) => {
+  try {
+    const statObject = {
+      TPS: 0,
+      accountCount: await Account.countDocuments(),
+      blocksCount: await Block.countDocuments(),
+      transactionsCount: await Transaction.countDocuments(),
+      totalTransafers: 0,
+    };
+    res.json(statObject);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 router.get("/block/:blockNum", async (req, res) => {
   try {
@@ -31,6 +50,7 @@ router.get("/blocks", async (req, res) => {
     const limit = parseInt(req.query.limit) || 25;
 
     const blocks = await getPaginatedBlocks(page, limit);
+
     res.json(blocks);
   } catch (error) {
     res.status(500).send(error.message);
@@ -112,6 +132,7 @@ router.get("/accounts", async (req, res) => {
     const limit = parseInt(req.query.limit) || 25;
 
     const accounts = await getPaginatedAccounts(page, limit);
+
     res.json(accounts);
   } catch (error) {
     res.status(500).send(error.message);
@@ -144,6 +165,18 @@ router.get("/chainID", async (req, res) => {
       id: chainIdProperties.id,
       immutable_parameters: chainIdProperties.immutable_parameters,
     });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/txs", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 25;
+    const transactions = await getPaginatedTransactions(page, limit);
+
+    res.json(transactions);
   } catch (error) {
     res.status(500).send(error.message);
   }
