@@ -3,6 +3,7 @@ const { Apis } = require("bitsharesjs-ws");
 const apiRoutes = require("./routes/api");
 const { swaggerUi, swaggerDocs } = require("./swagger");
 const app = express();
+const cors = require("cors");
 
 require("dotenv").config();
 const port = process.env.PORT || 3001;
@@ -20,6 +21,9 @@ Apis.instance(localNode, true)
   .catch((err) => {
     console.error(`Error connecting to BitShares node: ${localNode}`, err);
   });
+
+// Enable CORS for all routes
+app.use(cors());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
