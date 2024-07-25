@@ -43,13 +43,13 @@ const latestBlock = async () => {
   }
 };
 
-const lowestBlock = async () => {
-  const _lowestBlock = await Block.find().sort({ blockNumber: 1 }).limit(1);
-  if (_lowestBlock.length > 0) {
-    return _lowestBlock[0].blockNumber;
-  }
-  return 0;
-};
+// const lowestBlock = async () => {
+//   const _lowestBlock = await Block.find().sort({ blockNumber: 1 }).limit(1);
+//   if (_lowestBlock.length > 0) {
+//     return _lowestBlock[0].blockNumber;
+//   }
+//   return 0;
+// };
 
 const delay = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -60,7 +60,7 @@ const initializeWebSocket = async () => {
   await Apis.instance(wsNode, true)
     .init_promise.then((res) => {
       let nodeRes = res[0];
-      // console.log(`Connected to BitShares node: ${wsNode}`, nodeRes);
+      console.log(`Connected to BitShares node: ${wsNode}`, nodeRes);
     })
     .catch((error) => {
       logError("Failed to establish WebSocket connection:", error);
@@ -74,7 +74,7 @@ const indexing = async () => {
     let _headBlockNumber = await latestBlock();
     let _heighestBlock = await heighestBlock();
 
-    console.log(
+    logInfo(
       `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
     );
 
@@ -82,7 +82,7 @@ const indexing = async () => {
       console.log("🚀 ~ indexing ~ _heighestBlock:", _heighestBlock);
       await apiHelper.updateBlockEntry(_heighestBlock);
       console.log(`Updated block: ${_heighestBlock}`);
-      await delay(0);
+      // await delay(0);
     }
     logInfo(`Initial loop ends: ${_heighestBlock}`);
   } catch (error) {
@@ -132,23 +132,19 @@ const blockIndexer = async () => {
 
 const findMissing = async () => {
   try {
-    // await initializeWebSocket();
-
     let _heighestBlock = await heighestBlock();
-    let _lowestBlock = await lowestBlock();
+    let _lowestBlock = 1;
     logInfo(`Finding missing blocks in DB`);
 
-    for (let blockNumber = 33; blockNumber <= _heighestBlock; blockNumber++) {
-      let existingBlock = await Block.findOne({ blockNumber });
-      console.log("🚀 ~ findMissing ! ~ blockNumber:", blockNumber);
+    for (_lowestBlock; _lowestBlock <= _heighestBlock; _lowestBlock++) {
+      let existingBlock = await Block.findOne({ _lowestBlock });
+      console.log("🚀 ~ findMissing ! ~ _lowestBlock:", _lowestBlock);
 
       if (!existingBlock) {
-        await apiHelper.updateBlockEntry(blockNumber);
-        console.log("🚀 ~ findMissing yes ~ blockNumber:", blockNumber);
+        await apiHelper.updateBlockEntry(_lowestBlock);
+        console.log("🚀 ~ findMissing yes ~ _lowestBlock:", _lowestBlock);
       }
-      existingBlock = await Block.findOne({ blockNumber });
-
-      await delay(0);
+      existingBlock = await Block.findOne({ _lowestBlock });
     }
   } catch (error) {
     logError(`Error in findMissing: ${error.message}`);
