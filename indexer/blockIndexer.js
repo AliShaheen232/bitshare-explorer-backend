@@ -1,10 +1,11 @@
 require("dotenv").config();
 const { Apis } = require("bitsharesjs-ws");
 const connectDB = require("../db");
-const { updateBlockEntry } = require("../helper/apiHelper");
+const apiHelper = require("../helper/apiHelper");
 const fs = require("fs");
 const Block = require("../models/Block");
 const path = require("path");
+// require("../models/OperationCount");
 
 connectDB();
 
@@ -25,10 +26,6 @@ const logInfo = (message) => {
 const heighestBlock = async () => {
   const _heighestBlock = await Block.find().sort({ blockNumber: -1 }).limit(1);
   if (_heighestBlock.length > 0) {
-    console.log(
-      "🚀 ~ heighestBlock ~ _heighestBlock[0].blockNumber:",
-      _heighestBlock[0].blockNumber
-    );
     return _heighestBlock[0].blockNumber;
   }
   return 0;
@@ -76,7 +73,6 @@ const indexing = async () => {
 
     let _headBlockNumber = await latestBlock();
     let _heighestBlock = await heighestBlock();
-    let _lastBlockNumber = 0;
 
     console.log(
       `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
@@ -84,7 +80,7 @@ const indexing = async () => {
 
     for (_heighestBlock; _heighestBlock <= _headBlockNumber; _heighestBlock++) {
       console.log("🚀 ~ indexing ~ _heighestBlock:", _heighestBlock);
-      await updateBlockEntry(_heighestBlock);
+      await apiHelper.updateBlockEntry(_heighestBlock);
       console.log(`Updated block: ${_heighestBlock}`);
       await delay(0);
     }
@@ -107,11 +103,16 @@ const blockIndexer = async () => {
 
     logInfo(`Updating DB with new blocks`);
 
+    let _lastBlockNumber = 0;
     setInterval(async () => {
       try {
         let currentBlockNumber = await latestBlock();
         if (currentBlockNumber > _lastBlockNumber) {
-          await updateBlockEntry(currentBlockNumber);
+          console.log(
+            "🚀 ~ setInterval ~ currentBlockNumber:",
+            currentBlockNumber
+          );
+          await apiHelper.updateBlockEntry(currentBlockNumber);
           _lastBlockNumber = currentBlockNumber;
         } else {
           console.log(
@@ -121,7 +122,7 @@ const blockIndexer = async () => {
       } catch (error) {
         logError(`Error in setInterval: ${error.message}`);
       }
-    }, 100);
+    }, 1000);
   } catch (error) {
     // Log any errors that occur
     logError(`Error in indexer function: ${error.message}`);
@@ -137,19 +138,17 @@ const findMissing = async () => {
     let _lowestBlock = await lowestBlock();
     logInfo(`Finding missing blocks in DB`);
 
-    for (
-      let blockNumber = _lowestBlock;
-      blockNumber <= _heighestBlock;
-      blockNumber++
-    ) {
+    for (let blockNumber = 33; blockNumber <= _heighestBlock; blockNumber++) {
       let existingBlock = await Block.findOne({ blockNumber });
+      console.log("🚀 ~ findMissing ! ~ blockNumber:", blockNumber);
 
       if (!existingBlock) {
-        await _updateBlockEntry(blockNumber);
+        await apiHelper.updateBlockEntry(blockNumber);
+        console.log("🚀 ~ findMissing yes ~ blockNumber:", blockNumber);
       }
       existingBlock = await Block.findOne({ blockNumber });
 
-      await delay(100);
+      await delay(0);
     }
   } catch (error) {
     logError(`Error in findMissing: ${error.message}`);

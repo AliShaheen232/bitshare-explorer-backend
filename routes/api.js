@@ -1,18 +1,8 @@
 const express = require("express");
 const { Apis } = require("bitsharesjs-ws");
 const connectDB = require("../db");
+const apiHelper = require("../helper/apiHelper");
 const AccountCount = require("../models/AccountCount");
-const {
-  updateBlockEntry,
-  updateTransactionEntry,
-  updateAccountEntry,
-  getPaginatedBlocks,
-  getPaginatedTransactions,
-  getPaginatedAccounts,
-} = require("../helper/apiHelper");
-const Account = require("../models/Account");
-const Transaction = require("../models/Transaction");
-const Block = require("../models/Block");
 
 const router = express.Router();
 
@@ -20,13 +10,7 @@ connectDB();
 
 router.get("/stat", async (req, res) => {
   try {
-    const statObject = {
-      TPS: 0,
-      accountCount: await Account.countDocuments(),
-      blocksCount: await Block.countDocuments(),
-      transactionsCount: await Transaction.countDocuments(),
-      totalTransafers: 0,
-    };
+    const statObject = await apiHelper.getStat();
     res.json(statObject);
   } catch (error) {
     res.status(500).send(error.message);
@@ -49,7 +33,7 @@ router.get("/blocks", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 25;
 
-    const blocks = await getPaginatedBlocks(page, limit);
+    const blocks = await apiHelper.getPaginatedBlocks(page, limit);
 
     res.json(blocks);
   } catch (error) {
@@ -131,7 +115,7 @@ router.get("/accounts", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 25;
 
-    const accounts = await getPaginatedAccounts(page, limit);
+    const accounts = await apiHelper.getPaginatedAccounts(page, limit);
 
     res.json(accounts);
   } catch (error) {
@@ -144,7 +128,7 @@ router.get("/account/:accountIdent", async (req, res) => {
     const accountIdents = req.params.accountIdent;
     console.log("🚀 ~ router.get ~ accountIdent:", accountIdents);
 
-    const accounts = await updateAccountEntry([accountIdents]);
+    const accounts = await _updateAccountEntry([accountIdents]);
 
     res.json(accounts);
   } catch (error) {
@@ -174,7 +158,7 @@ router.get("/txs", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 25;
-    const transactions = await getPaginatedTransactions(page, limit);
+    const transactions = await apiHelper.getPaginatedTransactions(page, limit);
 
     res.json(transactions);
   } catch (error) {
@@ -258,7 +242,7 @@ const identifyInput = async (input) => {
       .exec("get_recent_transaction_by_id", [input]);
 
     if (transaction == null) return null;
-    const transactionRes = await updateTransactionEntry(transaction);
+    const transactionRes = await apiHelper.updateTransactionEntry(transaction);
     return transactionRes;
   }
 
@@ -273,34 +257,15 @@ const identifyInput = async (input) => {
 };
 
 const _updateBlockEntry = async (blockNumber) => {
-  return await updateBlockEntry(blockNumber);
+  return await apiHelper.updateBlockEntry(blockNumber);
 };
 
 const _updateTransactionEntry = async (transaction) => {
-  return await updateTransactionEntry(transaction);
+  return await apiHelper.updateTransactionEntry(transaction);
 };
 
 const _updateAccountEntry = async (account) => {
-  return await updateAccountEntry(account);
+  return await apiHelper.updateAccountEntry(account);
 };
 
 module.exports = router;
-
-/*
-router.get("/account/:accountRef", async (req, res) => {
-  try {
-    const accountRef = [req.params.accountRef];
-    console.log("🚀 ~ router.get ~ accountRef:", accountRef);
-
-    const account = await Apis.instance()
-      .db_api()
-      .exec("get_account_references", accountRef);
-
-    if (account == null) return res.json(null);
-
-    res.json(account);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-*/
