@@ -6,6 +6,7 @@ const Block = require("../models/Block");
 const OperationCount = require("../models/OperationCount");
 const objects = require("./DTO.json");
 const getOperationType = require("./operationType");
+// const mongoose = require("mongoose");
 
 connectDB();
 
@@ -124,13 +125,15 @@ const updateAccountEntry = async (accountsIden) => {
 
 const updateOperationType = async (type) => {
   let existingDoc = await OperationCount.findOne({});
+
   if (existingDoc) {
     await _updateOperationType(type);
-  } else {
-    existingDoc = await _createOperationCountDoc();
-
-    await _updateOperationType(type);
+    return;
   }
+  // else {
+  //   existingDoc = await _createOperationCountDoc();
+  //   await _updateOperationType(type);
+  // }
 };
 
 const _updateOperationType = async (type) => {
@@ -143,11 +146,11 @@ const _updateOperationType = async (type) => {
   );
 };
 
-const _createOperationCountDoc = async () => {
-  newOperationDoc = new OperationCount();
-  await newOperationDoc.save();
-  return newOperationDoc;
-};
+// const _createOperationCountDoc = async () => {
+//   const newOperationDoc = new OperationCount();
+//   await newOperationDoc.save();
+//   return newOperationDoc;
+// };
 
 const refineTx = (txObj) => {
   objects.transaction = {

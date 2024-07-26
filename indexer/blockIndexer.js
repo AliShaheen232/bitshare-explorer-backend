@@ -5,7 +5,7 @@ const apiHelper = require("../helper/apiHelper");
 const fs = require("fs");
 const Block = require("../models/Block");
 const path = require("path");
-// require("../models/OperationCount");
+const OperationCount = require("../models/OperationCount");
 
 connectDB();
 
@@ -94,7 +94,7 @@ const blockIndexer = async () => {
   try {
     logInfo(`DB syncing started`);
     await initializeWebSocket();
-
+    await _createOperationCountDoc();
     await indexing();
 
     await findMissing();
@@ -126,7 +126,18 @@ const blockIndexer = async () => {
   } catch (error) {
     // Log any errors that occur
     logError(`Error in indexer function: ${error.message}`);
-    indexer();
+    blockIndexer();
+  }
+};
+
+const _createOperationCountDoc = async () => {
+  let existingDoc = await OperationCount.findOne({});
+  if (!existingDoc) {
+    const newOperationDoc = new OperationCount();
+    await newOperationDoc.save();
+    return newOperationDoc;
+  } else {
+    return existingDoc;
   }
 };
 
