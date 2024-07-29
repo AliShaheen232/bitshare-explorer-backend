@@ -196,7 +196,7 @@
  */
 /**
  * @swagger
- * /api/block/latestBlock:
+ * /api/latestBlock:
  *   get:
  *     summary: Retrieve block data
  *     tags: [Blocks]
