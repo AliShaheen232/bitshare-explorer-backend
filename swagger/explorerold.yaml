@@ -124,7 +124,7 @@ paths:
         500:
           description: Server error
 
-  "/api/latestBlock":
+  "/api/block/latestBlock":
     get:
       summary: Retrieve block data
       description: Retrieve block data by block number

@@ -63,7 +63,7 @@ router.get("/txs/:blockNum", async (req, res) => {
   }
 });
 
-router.get("/latestBlock", async (req, res) => {
+router.get("/block/latestBlock", async (req, res) => {
   try {
     const latestBlock = await Apis.instance()
       .db_api()

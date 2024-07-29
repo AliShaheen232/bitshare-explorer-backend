@@ -91,7 +91,7 @@ paths:
           description: Chain ID
         "500":
           description: Server error
-  /latestBlock:
+  block/latestBlock:
     get:
       summary: Retrieve the latest block data
       description: Retrieve the data of the latest block on the blockchain
