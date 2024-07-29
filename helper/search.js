@@ -1,4 +1,4 @@
-function identifyInput(input) {
+function searchInput(input) {
   input = input.trim();
 
   if (/^\d+$/.test(input)) {

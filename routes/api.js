@@ -205,10 +205,10 @@ router.get("/config", async (req, res) => {
   }
 });
 
-router.get("/identify/:input", async (req, res) => {
+router.get("/search/:input", async (req, res) => {
   try {
     const input = req.params.input;
-    const resp = await identifyInput(input);
+    const resp = await searchInput(input);
     res.json(resp);
   } catch (error) {
     res.status(500).send(error.message);
@@ -227,7 +227,7 @@ router.get("/accounts/:lowerBoundName", async (req, res) => {
   return res.json(result);
 });
 
-const identifyInput = async (input) => {
+const searchInput = async (input) => {
   input = input.trim();
 
   if (/^\d+$/.test(input)) {

@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /api/identify/{input}:
+ * /api/search/{input}:
  *   get:
  *     summary: Retrieve Block number, Transaction hash, Account ID, or Account name data
  *     tags: [Global]
