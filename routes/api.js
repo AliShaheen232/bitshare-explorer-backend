@@ -123,12 +123,23 @@ router.get("/accounts", async (req, res) => {
   }
 });
 
+router.get("/account/fetchPubKey/:username", async (req, res) => {
+  try {
+    const userName = req.params.username;
+
+    const pubKey = await apiHelper.getPublicKeys(userName);
+
+    res.json(pubKey);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 router.get("/account/:accountIdent", async (req, res) => {
   try {
     const accountIdents = req.params.accountIdent;
-    console.log("🚀 ~ router.get ~ accountIdent:", accountIdents);
 
-    const accounts = await _updateAccountEntry([accountIdents]);
+    const accounts = await _updateAccountEntry(accountIdents);
 
     res.json(accounts);
   } catch (error) {
@@ -138,7 +149,6 @@ router.get("/account/:accountIdent", async (req, res) => {
 
 router.get("/chainID", async (req, res) => {
   try {
-    console.log("🚀 ~ router.get ~ Apis:", Apis);
     const chainId = await Apis.instance().db_api().exec("get_chain_id", []);
     const chainIdProperties = await Apis.instance()
       .db_api()
@@ -231,9 +241,7 @@ const searchInput = async (input) => {
   input = input.trim();
 
   if (/^\d+$/.test(input)) {
-    const block = await _updateBlockEntry(input);
-
-    return block;
+    return await _updateBlockEntry(input);
   }
 
   if (/^[0-9a-fA-F]{40}$/.test(input)) {
@@ -242,16 +250,22 @@ const searchInput = async (input) => {
       .exec("get_recent_transaction_by_id", [input]);
 
     if (transaction == null) return null;
-    const transactionRes = await apiHelper.updateTransactionEntry(transaction);
-    return transactionRes;
+    return await apiHelper.updateTransactionEntry(transaction);
   }
 
+  // account ID check
   if (/^[1-9]+\.\d+\.\d+$/.test(input)) {
-    return await _updateAccountEntry([input]);
+    return await _updateAccountEntry(input);
   }
 
+  // account name check
   if (/^[a-zA-Z0-9]+$/.test(input)) {
-    return await _updateAccountEntry([input]);
+    return await _updateAccountEntry(input);
+  }
+
+  // base58 check
+  if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(input)) {
+    return await _updateAccountEntry(input);
   }
   return null;
 };

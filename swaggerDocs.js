@@ -9,7 +9,7 @@
  *       - in: path
  *         name: input
  *         required: true
- *         description: Block number, Transaction hash, Account ID, or Account name to retrieve
+ *         description: Block number, Transaction hash, Public key, Account ID, or Account name to retrieve data
  *         schema:
  *           type: string
  *     responses:
@@ -28,6 +28,32 @@
  *     responses:
  *       200:
  *         description: Accounts count
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
+ * /api/account/fetchPubKey/{username}:
+ *   get:
+ *     summary: Retrieve public keys for a specific account
+ *     tags: [Accounts]
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The username of the account to retrieve public keys for
+ *     responses:
+ *       200:
+ *         description: A list of public keys for the specified account
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ *                 description: A public key
  *       500:
  *         description: Server error
  */

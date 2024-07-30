@@ -6,7 +6,6 @@ const Block = require("../models/Block");
 const OperationCount = require("../models/OperationCount");
 const objects = require("./DTO.json");
 const getOperationType = require("./operationType");
-// const mongoose = require("mongoose");
 
 connectDB();
 
@@ -95,16 +94,26 @@ const updateTransactionEntry = async (transaction) => {
 };
 
 const updateAccountEntry = async (accountsIden) => {
-  const accounts = await Apis.instance()
-    .db_api()
-    .exec("get_accounts", [accountsIden]);
+  if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(accountsIden)) {
+    let keyRef = await Apis.instance()
+      .db_api()
+      .exec("get_key_references", [[accountsIden]]);
+    accountsIden = keyRef[0][0];
+  }
 
   let accountObject = [];
+
+  const accounts = await Apis.instance()
+    .db_api()
+    .exec("get_accounts", [[accountsIden]]);
+
+  console.log("🚀 ~ updateAccountEntry ~ accounts:", accounts);
 
   for (let i = 0; i < accounts.length; i++) {
     objects.account = {
       account_id: accounts[i].id,
       name: accounts[i].name,
+      public_key: accounts[i].owner.key_auths[0][0],
       data: accounts[i],
     };
 
@@ -130,10 +139,6 @@ const updateOperationType = async (type) => {
     await _updateOperationType(type);
     return;
   }
-  // else {
-  //   existingDoc = await _createOperationCountDoc();
-  //   await _updateOperationType(type);
-  // }
 };
 
 const _updateOperationType = async (type) => {
@@ -145,12 +150,6 @@ const _updateOperationType = async (type) => {
     { new: true, upsert: true }
   );
 };
-
-// const _createOperationCountDoc = async () => {
-//   const newOperationDoc = new OperationCount();
-//   await newOperationDoc.save();
-//   return newOperationDoc;
-// };
 
 const refineTx = (txObj) => {
   objects.transaction = {
@@ -262,6 +261,36 @@ const getPaginatedAccounts = async (page, limit) => {
   return pagAccountObject;
 };
 
+const getPublicKeys = async (username) => {
+  try {
+    const existingAccount = await Account.findOne({
+      name: username,
+    });
+
+    if (existingAccount) {
+      return existingAccount.public_key;
+    } else {
+      const account = await Apis.instance()
+        .db_api()
+        .exec("get_account_by_name", [username]);
+
+      if (!account) {
+        console.error("Account not existed");
+        return;
+      }
+
+      // Extract public keys from the account details
+      const ownerPubKey = account.owner.key_auths[0][0];
+      // const activePubKey = account.active.key_auths[0][0];
+      // const memoPubKey = account.options.memo_key;
+
+      return ownerPubKey;
+    }
+  } catch (error) {
+    console.error("Error fetching account details:", error.message);
+  }
+};
+
 module.exports = {
   updateBlockEntry,
   updateTransactionEntry,
@@ -270,4 +299,5 @@ module.exports = {
   getPaginatedTransactions,
   getPaginatedAccounts,
   getStat,
+  getPublicKeys,
 };

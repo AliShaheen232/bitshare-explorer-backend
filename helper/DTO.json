@@ -1,6 +1,7 @@
 {
   "account": {
     "account_id": "",
+    "public_key": "",
     "name": "",
     "data": {}
   },
