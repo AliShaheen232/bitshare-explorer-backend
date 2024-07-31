@@ -110,7 +110,6 @@ const updateAccountEntry = async (accountsIden) => {
     .db_api()
     .exec("get_accounts", [[accountsIden]]);
 
-
   for (let i = 0; i < accounts.length; i++) {
     objects.account = {
       account_id: accounts[i].id,
@@ -190,7 +189,7 @@ const _refineTx = (txObj) => {
 
 const refineBlock = (blockObj) => {
   objects.block = {
-    blockNumber: blockObj.blockNumber,
+    block_number: blockObj.blockNumber,
     previous: blockObj.previous,
     timestamp: blockObj.timestamp,
     witness: blockObj.witness,

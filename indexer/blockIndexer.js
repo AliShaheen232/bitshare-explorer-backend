@@ -24,7 +24,7 @@ const logInfo = (message) => {
 };
 
 const heighestBlock = async () => {
-  const _heighestBlock = await Block.find().sort({ blockNumber: -1 }).limit(1);
+  const _heighestBlock = await Block.find().sort({ block_number: -1 }).limit(1);
   if (_heighestBlock.length > 0) {
     return _heighestBlock[0].blockNumber;
   }
@@ -72,8 +72,7 @@ const indexing = async () => {
     // await initializeWebSocket();
 
     let _headBlockNumber = await latestBlock();
-    let _heighestBlock = 100000;
-    // let _heighestBlock = await heighestBlock();
+    let _heighestBlock = await heighestBlock();
 
     logInfo(
       `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
@@ -145,13 +144,13 @@ const findMissing = async () => {
     logInfo(`Finding missing blocks in DB`);
 
     for (_lowestBlock; _lowestBlock <= _heighestBlock; _lowestBlock++) {
-      let existingBlock = await Block.findOne({ _lowestBlock });
+      let existingBlock = await Block.findOne({ block_number: _lowestBlock });
 
       if (!existingBlock) {
         await apiHelper.updateBlockEntry(_lowestBlock);
         console.log("findMissing ~ Missed Block updated", _lowestBlock);
       }
-      existingBlock = await Block.findOne({ _lowestBlock });
+      existingBlock = await Block.findOne({ block_number: _lowestBlock });
     }
   } catch (error) {
     logError(`Error in findMissing: ${error.message}`);
