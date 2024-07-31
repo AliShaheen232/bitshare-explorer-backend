@@ -72,8 +72,8 @@ const indexing = async () => {
     // await initializeWebSocket();
 
     let _headBlockNumber = await latestBlock();
-    let _heighestBlock = 1000000;
-    // let _heighestBlock = await heighestBlock();
+    // let _heighestBlock = 1000000;
+    let _heighestBlock = await heighestBlock();
 
     logInfo(
       `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
