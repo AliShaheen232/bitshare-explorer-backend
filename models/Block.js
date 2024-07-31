@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const BlockSchema = new mongoose.Schema({
-  blockNumber: { type: Number, required: true },
+  block_number: { type: Number, required: true },
   previous: { type: String, required: true },
   witness: { type: String, required: true },
   witness_signature: { type: String, required: true },

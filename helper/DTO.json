@@ -5,6 +5,7 @@
     "name": "",
     "data": {}
   },
+
   "block": {
     "blockNumber": 0,
     "previous": "",
@@ -14,7 +15,10 @@
     "transaction_count": 0,
     "timestamp": ""
   },
+
   "transaction": {
+    "transaction_hash": "",
+    "block_number": 0,
     "ref_block_num": 0,
     "ref_block_prefix": 0,
     "expiration": 0,

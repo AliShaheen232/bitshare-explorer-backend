@@ -6,12 +6,13 @@ const Block = require("../models/Block");
 const OperationCount = require("../models/OperationCount");
 const objects = require("./DTO.json");
 const getOperationType = require("./operationType");
+const computeTxHash = require("./computeTxHash");
 
 connectDB();
 
-const updateBlockEntry = async (blockNumber) => {
+const updateBlockEntry = async (block_number) => {
   let existingBlock = await Block.findOne({
-    blockNumber,
+    block_number,
   });
 
   let txCount = 0;
@@ -19,7 +20,8 @@ const updateBlockEntry = async (blockNumber) => {
   let _txObjects = [];
 
   if (existingBlock) {
-    const entries = await Transaction.find({ blockNumber });
+    const entries = await Transaction.find({ block_number });
+
     entries.forEach((entry) => {
       _txObjects.push(refineTx(entry));
     });
@@ -34,7 +36,7 @@ const updateBlockEntry = async (blockNumber) => {
     return blockObj;
   }
 
-  let block = await Apis.instance().db_api().exec("get_block", [blockNumber]);
+  let block = await Apis.instance().db_api().exec("get_block", [block_number]);
 
   if (block == null) return null;
 
@@ -42,13 +44,13 @@ const updateBlockEntry = async (blockNumber) => {
     txCount = block.transactions.length;
 
     for (let i = 0; i < txCount; i++) {
-      let tx = { blockNumber, ...block.transactions[i] };
+      let tx = { block_number, ...block.transactions[i] };
       tx = await updateTransactionEntry(tx);
       _txObjects.push(refineTx(tx));
     }
   }
 
-  blockObj = refineBlock({ blockNumber, txCount, ...block });
+  blockObj = refineBlock({ block_number, txCount, ...block });
   const newBlock = new Block(blockObj);
   await newBlock.save();
   blockObj = { ...blockObj, transactions: _txObjects };
@@ -56,8 +58,10 @@ const updateBlockEntry = async (blockNumber) => {
 };
 
 const updateTransactionEntry = async (transaction) => {
+  const hash = computeTxHash(transaction);
+
   const existingTransaction = await Transaction.findOne({
-    signatures: transaction.signatures[0],
+    transaction_hash: hash,
   });
 
   let _txObject;
@@ -85,8 +89,7 @@ const updateTransactionEntry = async (transaction) => {
 
     operation[0] = operationName;
   });
-
-  _txObject = _refineTx(transaction);
+  _txObject = _refineTx({ hash, ...transaction });
 
   const newTransaction = new Transaction(_txObject);
   await newTransaction.save();
@@ -107,7 +110,6 @@ const updateAccountEntry = async (accountsIden) => {
     .db_api()
     .exec("get_accounts", [[accountsIden]]);
 
-  console.log("🚀 ~ updateAccountEntry ~ accounts:", accounts);
 
   for (let i = 0; i < accounts.length; i++) {
     objects.account = {
@@ -153,6 +155,7 @@ const _updateOperationType = async (type) => {
 
 const refineTx = (txObj) => {
   objects.transaction = {
+    transaction_hash: txObj.transaction_hash,
     ref_block_num: txObj.ref_block_num,
     ref_block_prefix: txObj.ref_block_prefix,
     expiration: txObj.expiration,
@@ -165,14 +168,15 @@ const refineTx = (txObj) => {
 };
 
 const _refineTx = (txObj) => {
-  let blockNumber;
-  if ("blockNumber" in txObj) {
-    blockNumber = txObj.blockNumber;
+  let block_number;
+  if ("block_number" in txObj) {
+    block_number = txObj.block_number;
   } else {
-    blockNumber = null;
+    block_number = null;
   }
   objects.transaction = {
-    blockNumber,
+    transaction_hash: txObj.hash,
+    block_number,
     ref_block_num: txObj.ref_block_num,
     ref_block_prefix: txObj.ref_block_prefix,
     expiration: txObj.expiration,

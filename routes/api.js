@@ -3,6 +3,7 @@ const { Apis } = require("bitsharesjs-ws");
 const connectDB = require("../db");
 const apiHelper = require("../helper/apiHelper");
 const AccountCount = require("../models/AccountCount");
+const Transaction = require("../models/Transaction");
 
 const router = express.Router();
 
@@ -43,21 +44,28 @@ router.get("/blocks", async (req, res) => {
 
 // block.transactions[block.transactions.length - 1].operations.length;
 router.get("/txs/:blockNum", async (req, res) => {
-  block = { transaction_merkle_root: "", transactions: [] };
   try {
     const blockNumber = req.params.blockNum;
-    let block = await Apis.instance().db_api().exec("get_block", [blockNumber]);
 
-    console.log("🚀 ~ router.get ~ block:", block);
+    // let block = await Apis.instance().db_api().exec("get_block", [blockNumber]);
 
-    if (block == null) return res.json(null);
+    // if (block == null) return res.json(null);
 
-    let transactions = [];
-    for (let i = 0; i < block.transactions.length; i++) {
-      const transaction = await _updateTransactionEntry(block.transactions[i]);
-      transactions.push(transaction);
-    }
-    res.json(transactions);
+    // let transactions = [];
+    // for (let i = 0; i < block.transactions.length; i++) {
+
+    //   const transaction = await _updateTransactionEntry({
+    //     blockNumber,
+    //     ...block.transactions[i],
+    //   });
+
+    //   transactions.push(transaction);
+    // }
+
+    const block = await _updateBlockEntry(blockNumber);
+    const txs = block.transactions;
+
+    res.json(txs);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -179,11 +187,7 @@ router.get("/txs", async (req, res) => {
 router.get("/tx/:transaction", async (req, res) => {
   try {
     const transactionHash = req.params.transaction;
-    const transaction = await Apis.instance()
-      .db_api()
-      .exec("get_recent_transaction_by_id", [transactionHash]);
-    if (transaction == null) return res.json(null);
-    const transactionRes = await _updateTransactionEntry(transaction);
+    const transactionRes = await _updateTransactionEntry(transactionHash);
 
     res.json(transactionRes);
   } catch (error) {
@@ -245,12 +249,7 @@ const searchInput = async (input) => {
   }
 
   if (/^[0-9a-fA-F]{40}$/.test(input)) {
-    const transaction = await Apis.instance()
-      .db_api()
-      .exec("get_recent_transaction_by_id", [input]);
-
-    if (transaction == null) return null;
-    return await apiHelper.updateTransactionEntry(transaction);
+    return await _updateTransactionEntry(input);
   }
 
   // account ID check
@@ -274,8 +273,23 @@ const _updateBlockEntry = async (blockNumber) => {
   return await apiHelper.updateBlockEntry(blockNumber);
 };
 
-const _updateTransactionEntry = async (transaction) => {
-  return await apiHelper.updateTransactionEntry(transaction);
+const _updateTransactionEntry = async (transactionHash) => {
+  let transaction;
+  const existingTransaction = await Transaction.findOne({
+    transaction_hash: transactionHash,
+  });
+
+  if (existingTransaction) {
+    transaction = await apiHelper.updateTransactionEntry(existingTransaction);
+  } else {
+    const transaction = await Apis.instance()
+      .db_api()
+      .exec("get_recent_transaction_by_id", [transactionHash]);
+    if (transaction == null) return null;
+    transaction = await apiHelper.updateTransactionEntry(transaction);
+  }
+
+  return transaction;
 };
 
 const _updateAccountEntry = async (account) => {

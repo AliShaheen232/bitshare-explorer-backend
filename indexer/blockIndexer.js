@@ -72,16 +72,16 @@ const indexing = async () => {
     // await initializeWebSocket();
 
     let _headBlockNumber = await latestBlock();
-    let _heighestBlock = await heighestBlock();
+    let _heighestBlock = 100000;
+    // let _heighestBlock = await heighestBlock();
 
     logInfo(
       `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
     );
 
     for (_heighestBlock; _heighestBlock <= _headBlockNumber; _heighestBlock++) {
-      console.log("🚀 ~ indexing ~ _heighestBlock:", _heighestBlock);
       await apiHelper.updateBlockEntry(_heighestBlock);
-      console.log(`Updated block: ${_heighestBlock}`);
+      console.log(`indexing ~ Updated block: ${_heighestBlock}`);
       // await delay(0);
     }
     logInfo(`Initial loop ends: ${_heighestBlock}`);
@@ -108,15 +108,12 @@ const blockIndexer = async () => {
       try {
         let currentBlockNumber = await latestBlock();
         if (currentBlockNumber > _lastBlockNumber) {
-          console.log(
-            "🚀 ~ setInterval ~ currentBlockNumber:",
-            currentBlockNumber
-          );
+          console.log("setInterval ~ New block updated:", currentBlockNumber);
           await apiHelper.updateBlockEntry(currentBlockNumber);
           _lastBlockNumber = currentBlockNumber;
         } else {
           console.log(
-            `No new block. Current block number: ${currentBlockNumber}`
+            `setInterval ~ No new block. Current block number: ${currentBlockNumber}`
           );
         }
       } catch (error) {
@@ -149,11 +146,10 @@ const findMissing = async () => {
 
     for (_lowestBlock; _lowestBlock <= _heighestBlock; _lowestBlock++) {
       let existingBlock = await Block.findOne({ _lowestBlock });
-      console.log("🚀 ~ findMissing ! ~ _lowestBlock:", _lowestBlock);
 
       if (!existingBlock) {
         await apiHelper.updateBlockEntry(_lowestBlock);
-        console.log("🚀 ~ findMissing yes ~ _lowestBlock:", _lowestBlock);
+        console.log("findMissing ~ Missed Block updated", _lowestBlock);
       }
       existingBlock = await Block.findOne({ _lowestBlock });
     }
