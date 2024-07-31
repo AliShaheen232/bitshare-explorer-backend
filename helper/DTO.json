@@ -7,7 +7,7 @@
   },
 
   "block": {
-    "blockNumber": 0,
+    "block_number": 0,
     "previous": "",
     "witness": "",
     "witness_signature": "",

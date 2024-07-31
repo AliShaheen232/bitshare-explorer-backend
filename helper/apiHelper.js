@@ -189,7 +189,7 @@ const _refineTx = (txObj) => {
 
 const refineBlock = (blockObj) => {
   objects.block = {
-    block_number: blockObj.blockNumber,
+    block_number: blockObj.block_number,
     previous: blockObj.previous,
     timestamp: blockObj.timestamp,
     witness: blockObj.witness,
