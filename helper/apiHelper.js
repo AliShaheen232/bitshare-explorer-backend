@@ -309,7 +309,7 @@ const getLatestTransactions = async () => {
 
     for (let i = 0; i < txCount; i++) {
       let tx = { block_number, ...block.transactions[i] };
-      tx = await apiHelper.updateTransactionEntry(tx);
+      tx = await updateTransactionEntry(tx);
       txs.push(tx);
     }
   }
