@@ -294,6 +294,42 @@ const getPublicKeys = async (username) => {
   }
 };
 
+const getLatestTransactions = async () => {
+  const block_number = await latestBlock();
+
+  const block = await Apis.instance()
+    .db_api()
+    .exec("get_block", [block_number]);
+
+  if (block == null) return null;
+
+  let txs = [];
+  if (Array.isArray(block.transactions)) {
+    txCount = block.transactions.length;
+
+    for (let i = 0; i < txCount; i++) {
+      let tx = { block_number, ...block.transactions[i] };
+      tx = await apiHelper.updateTransactionEntry(tx);
+      txs.push(tx);
+    }
+  }
+
+  console.log(" getLatestTransactions ~ txs:", txs);
+  return txs;
+};
+
+const latestBlock = async () => {
+  try {
+    const blockchain = await Apis.instance()
+      .db_api()
+      .exec("get_dynamic_global_properties", []);
+    return blockchain.head_block_number - 7;
+  } catch (error) {
+    logError(`Error in latestBlock: ${error.message}`);
+    throw error;
+  }
+};
+
 module.exports = {
   updateBlockEntry,
   updateTransactionEntry,
@@ -301,6 +337,7 @@ module.exports = {
   getPaginatedBlocks,
   getPaginatedTransactions,
   getPaginatedAccounts,
+  getLatestTransactions,
   getStat,
   getPublicKeys,
 };

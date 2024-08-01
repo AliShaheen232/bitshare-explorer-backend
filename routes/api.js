@@ -194,14 +194,16 @@ router.get("/tx/:transaction", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
-router.get("/latest-transactions", async (req, res) => {
+
+router.get("/latestTxs", async (req, res) => {
   try {
-    const transactions = await getLatestTransactions();
+    const transactions = await apiHelper.getLatestTransactions();
     res.json(transactions);
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
+
 router.get("/globalProperties", async (req, res) => {
   try {
     const globalProperties = await Apis.instance()

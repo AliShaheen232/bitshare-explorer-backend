@@ -308,7 +308,7 @@
  */
 /**
  * @swagger
- * /api/latest-transactions:
+ * /api/latestTxs:
  *   get:
  *     summary: Retrieve the latest transactions in the BitShares blockchain
  *     tags: [Transactions]
