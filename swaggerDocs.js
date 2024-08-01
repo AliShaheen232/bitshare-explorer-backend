@@ -306,7 +306,39 @@
  *       500:
  *         description: Server error
  */
-
+/**
+ * @swagger
+ * /api/latest-transactions:
+ *   get:
+ *     summary: Retrieve the latest transactions in the BitShares blockchain
+ *     tags: [Transactions]
+ *     responses:
+ *       200:
+ *         description: A list of the latest transactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   ref_block_num:
+ *                     type: integer
+ *                   ref_block_prefix:
+ *                     type: integer
+ *                   expiration:
+ *                     type: string
+ *                   operations:
+ *                     type: array
+ *                     items:
+ *                       type: array
+ *                   signatures:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *       500:
+ *         description: Server error
+ */
 /**
  * @swagger
  * /api/txs:

@@ -51,7 +51,7 @@ const computeTxHash = (transaction) => {
 
   // Truncate to get a 40-character string
   const txHash = hash.slice(0, 40);
-  console.log("🚀 ~ computeTxHash ~ txHash:", txHash);
+  console.log("computeTxHash ~ txHash:", txHash);
   return txHash;
 };
 
