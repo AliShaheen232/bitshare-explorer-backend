@@ -4,6 +4,7 @@ const connectDB = require("../db");
 const apiHelper = require("../helper/apiHelper");
 const AccountCount = require("../models/AccountCount");
 const Transaction = require("../models/Transaction");
+const { asset } = require("bitsharesjs/dist/serializer/src/operations");
 
 const router = express.Router();
 
@@ -223,6 +224,47 @@ router.get("/config", async (req, res) => {
     const config = await Apis.instance().db_api().exec("get_config", []);
 
     res.json(config);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/assets", async (req, res) => {
+  try {
+    const { start, limit } = req.query;
+    const assets = await apiHelper.getTotalAssets();
+    res.json(assets);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/assets/:name", async (req, res) => {
+  try {
+    const name = req.params.name;
+
+    const asset = await apiHelper.fetchAssetByName(name);
+    if (!asset) {
+      return res.status(404).send("Asset not found");
+    }
+
+    res.json(asset);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/assets/:assetId/holders", async (req, res) => {
+  try {
+    const { assetId } = req.params;
+    const { start, limit } = req.query;
+
+    const holders = await apiHelper.fetchAssetHolders(
+      assetId,
+      start,
+      parseInt(limit, 10)
+    );
+    res.json(holders);
   } catch (error) {
     res.status(500).send(error.message);
   }

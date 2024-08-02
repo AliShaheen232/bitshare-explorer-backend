@@ -196,6 +196,126 @@
  */
 /**
  * @swagger
+ * /api/assets:
+ *   get:
+ *     summary: Retrieve a paginated list of assets with primary details
+ *     tags: [Assets]
+ *     parameters:
+ *       - in: query
+ *         name: start
+ *         schema:
+ *           type: string
+ *         description: The starting symbol of the assets to list
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *         description: The number of assets to retrieve
+ *     responses:
+ *       200:
+ *         description: A list of assets
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   symbol:
+ *                     type: string
+ *                   issuer:
+ *                     type: string
+ *                   precision:
+ *                     type: integer
+ *                   description:
+ *                     type: string
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
+ * /api/assets/{name}:
+ *   get:
+ *     summary: Retrieve an asset by its name
+ *     tags: [Assets]
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The name of the asset to retrieve
+ *     responses:
+ *       200:
+ *         description: An asset object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 symbol:
+ *                   type: string
+ *                 issuer:
+ *                   type: string
+ *                 precision:
+ *                   type: integer
+ *                 options:
+ *                   type: object
+ *                 dynamic_asset_data_id:
+ *                   type: string
+ *       404:
+ *         description: Asset not found
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
+ * /api/assets/{assetId}/holders:
+ *   get:
+ *     summary: Retrieve the list of asset holders
+ *     tags: [Assets]
+ *     parameters:
+ *       - in: path
+ *         name: assetId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the asset to retrieve holders for
+ *       - in: query
+ *         name: start
+ *         schema:
+ *           type: string
+ *         description: The starting holder ID
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *         description: The number of holders to retrieve
+ *     responses:
+ *       200:
+ *         description: A list of asset holders
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   account_id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   amount:
+ *                     type: string
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
  * /api/config:
  *   get:
  *     summary: Retrieve the config.

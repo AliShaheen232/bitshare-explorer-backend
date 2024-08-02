@@ -203,7 +203,11 @@ const refineBlock = (blockObj) => {
 
 const getPaginatedBlocks = async (page, limit) => {
   const skip = (page - 1) * limit;
-  const blocks = await Block.find().skip(skip).limit(limit).exec();
+  const blocks = await Block.find()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .exec();
   const pagBlockObject = {
     page,
     count: await Block.countDocuments(),
@@ -215,7 +219,11 @@ const getPaginatedBlocks = async (page, limit) => {
 
 const getPaginatedTransactions = async (page, limit) => {
   const skip = (page - 1) * limit;
-  const txs = await Transaction.find().skip(skip).limit(limit).exec();
+  const txs = await Transaction.find()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .exec();
   const pagTXObject = {
     page,
     count: await Transaction.countDocuments(),
@@ -255,7 +263,10 @@ const getStat = async () => {
 
 const getPaginatedAccounts = async (page, limit) => {
   const skip = (page - 1) * limit;
-  const accounts = await Account.find().skip(skip).limit(limit);
+  const accounts = await Account.find()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
   const pagAccountObject = {
     page,
     count: await Account.countDocuments(),
@@ -330,6 +341,37 @@ const latestBlock = async () => {
   }
 };
 
+const fetchAssetByName = async (name) => {
+  try {
+    console.log("🚀 ~ fetchAssetByName ~ name:", name);
+    const asset = await Apis.instance()
+      .db_api()
+      .exec("lookup_asset_symbols", [[name]]);
+    return asset[0];
+  } catch (error) {
+    console.error(`Error fetching asset: ${error.message}`);
+    throw error;
+  }
+};
+
+const getTotalAssets = async () => {
+  let assets = [];
+  assets = await Apis.instance().db_api().exec("list_assets", [0, 25]);
+
+  return assets;
+};
+const fetchAssetHolders = async (assetId, start = "1.2.0", limit = 25) => {
+  try {
+    const holders = await Apis.instance()
+      .db_api()
+      .exec("get_asset_holders", ["1.3.0", start, limit]);
+    return holders;
+  } catch (error) {
+    console.error(`Error fetching asset holders: ${error.message}`);
+    throw error;
+  }
+};
+
 module.exports = {
   updateBlockEntry,
   updateTransactionEntry,
@@ -338,6 +380,9 @@ module.exports = {
   getPaginatedTransactions,
   getPaginatedAccounts,
   getLatestTransactions,
+  getTotalAssets,
   getStat,
   getPublicKeys,
+  fetchAssetByName,
+  fetchAssetHolders,
 };
