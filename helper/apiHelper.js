@@ -1,4 +1,5 @@
 const { Apis } = require("bitsharesjs-ws");
+const initializeWebSocket = require("../connectNode");
 const connectDB = require("../db");
 const Account = require("../models/Account");
 const Transaction = require("../models/Transaction");
@@ -360,11 +361,13 @@ const getTotalAssets = async () => {
 
   return assets;
 };
-const fetchAssetHolders = async (assetId, start = "1.2.0", limit = 25) => {
+
+const fetchAssetHolders = async () => {
+  await initializeWebSocket();
   try {
     const holders = await Apis.instance()
       .db_api()
-      .exec("get_asset_holders", ["1.3.0", start, limit]);
+      .exec("get_asset_holders", ["RR", 0, 25 ]);
     return holders;
   } catch (error) {
     console.error(`Error fetching asset holders: ${error.message}`);
@@ -372,17 +375,18 @@ const fetchAssetHolders = async (assetId, start = "1.2.0", limit = 25) => {
   }
 };
 
-module.exports = {
-  updateBlockEntry,
-  updateTransactionEntry,
-  updateAccountEntry,
-  getPaginatedBlocks,
-  getPaginatedTransactions,
-  getPaginatedAccounts,
-  getLatestTransactions,
-  getTotalAssets,
-  getStat,
-  getPublicKeys,
-  fetchAssetByName,
-  fetchAssetHolders,
-};
+fetchAssetHolders();
+// module.exports = {
+//   updateBlockEntry,
+//   updateTransactionEntry,
+//   updateAccountEntry,
+//   getPaginatedBlocks,
+//   getPaginatedTransactions,
+//   getPaginatedAccounts,
+//   getLatestTransactions,
+//   getTotalAssets,
+//   getStat,
+//   getPublicKeys,
+//   fetchAssetByName,
+//   fetchAssetHolders,
+// };

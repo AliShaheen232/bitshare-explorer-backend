@@ -1,5 +1,5 @@
-require("dotenv").config();
 const { Apis } = require("bitsharesjs-ws");
+const initializeWebSocket = require("../connectNode");
 const connectDB = require("../db");
 const apiHelper = require("../helper/apiHelper");
 const fs = require("fs");
@@ -31,18 +31,6 @@ const latestBlock = async () => {
     logError(`Error in latestBlock: ${error.message}`);
     throw error;
   }
-};
-
-const initializeWebSocket = async () => {
-  const wsNode = process.env.WEBSOCKET_URL;
-  await Apis.instance(wsNode, true)
-    .init_promise.then((res) => {
-      let nodeRes = res[0];
-      console.log(`Connected to BitShares node: ${wsNode}`, nodeRes);
-    })
-    .catch((error) => {
-      logError("Failed to establish WebSocket connection:", error);
-    });
 };
 
 const delay = (ms) => {
