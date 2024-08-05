@@ -59,7 +59,12 @@ const updateBlockEntry = async (block_number) => {
 };
 
 const updateTransactionEntry = async (transaction) => {
-  const hash = computeTxHash(transaction);
+  let hash = "";
+  if (!"transaction_hash" in transaction) {
+    hash = computeTxHash(transaction);
+  } else {
+    hash = transaction.transaction_hash;
+  }
 
   const existingTransaction = await Transaction.findOne({
     transaction_hash: hash,
@@ -87,8 +92,6 @@ const updateTransactionEntry = async (transaction) => {
 
       await updateAccountEntry([operationData.name]);
     }
-
-    // operation[0] = operationName;
   });
 
   _txObject = _refineTx({ hash, ...transaction });
@@ -169,39 +172,26 @@ const refineTx = (txObj) => {
 };
 
 const _refineTx = (txObj) => {
-  let block_number;
-  if ("block_number" in txObj) {
-    block_number = txObj.block_number;
-  } else {
-    block_number = null;
-  }
+  let block_number = txObj.block_number || null;
 
   for (let i = 0; i < txObj.operations.length; i++) {
     const operationType = txObj.operations[i][0];
     const operationData = txObj.operations[i][1];
 
-    let operation = {};
+    let operation = { operationType };
 
     if ("amount" in operationData) {
-      let amount = operationData.amount;
+      operation.amount = operationData.amount;
       delete operationData.amount;
-      operation = { operationType, amount, operationData };
     }
 
     if ("memo" in operationData) {
-      let memo = operationData.memo;
+      operation.memo = operationData.memo;
       delete operationData.memo;
-      if ("amount" in operation) {
-        operation = {
-          operationType,
-          amount: operation.amount,
-          memo,
-          operationData,
-        };
-      } else {
-        operation = { operationType, memo, operationData };
-      }
     }
+
+    operation.operationData = operationData;
+    console.log("🚀 ~ _refineTx:", operation);
 
     txObj.operations[i] = operation;
   }
