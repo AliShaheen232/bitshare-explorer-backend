@@ -7,7 +7,7 @@ const path = require("path");
 
 connectDB();
 
-const logFile = path.join(__dirname, "transactionIndexer.log");
+const logFile = path.join(__dirname, "log_transactionIndexer.log");
 
 const logError = (message) => {
   const timestamp = new Date().toISOString();

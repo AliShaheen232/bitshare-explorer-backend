@@ -90,6 +90,7 @@ const updateTransactionEntry = async (transaction) => {
 
     operation[0] = operationName;
   });
+
   _txObject = _refineTx({ hash, ...transaction });
 
   const newTransaction = new Transaction(_txObject);
@@ -174,6 +175,15 @@ const _refineTx = (txObj) => {
   } else {
     block_number = null;
   }
+
+  for (let i = 0; i < txObj.operations.length; i++) {
+    const operationType = txObj.operations[i][0];
+    const operationData = txObj.operations[i][1];
+    const operation = { operationType, operationData };
+
+    txObj.operations[i] = operation;
+  }
+
   objects.transaction = {
     transaction_hash: txObj.hash,
     block_number,
@@ -367,7 +377,7 @@ const fetchAssetHolders = async () => {
   try {
     const holders = await Apis.instance()
       .db_api()
-      .exec("get_asset_holders", ["RR", 0, 25 ]);
+      .exec("get_asset_holders", ["RR", 0, 25]);
     return holders;
   } catch (error) {
     console.error(`Error fetching asset holders: ${error.message}`);
@@ -375,18 +385,18 @@ const fetchAssetHolders = async () => {
   }
 };
 
-fetchAssetHolders();
-// module.exports = {
-//   updateBlockEntry,
-//   updateTransactionEntry,
-//   updateAccountEntry,
-//   getPaginatedBlocks,
-//   getPaginatedTransactions,
-//   getPaginatedAccounts,
-//   getLatestTransactions,
-//   getTotalAssets,
-//   getStat,
-//   getPublicKeys,
-//   fetchAssetByName,
-//   fetchAssetHolders,
-// };
+// fetchAssetHolders();
+module.exports = {
+  updateBlockEntry,
+  updateTransactionEntry,
+  updateAccountEntry,
+  getPaginatedBlocks,
+  getPaginatedTransactions,
+  getPaginatedAccounts,
+  getLatestTransactions,
+  getTotalAssets,
+  getStat,
+  getPublicKeys,
+  fetchAssetByName,
+  fetchAssetHolders,
+};

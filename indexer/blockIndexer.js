@@ -10,7 +10,7 @@ const OperationCount = require("../models/OperationCount");
 
 connectDB();
 
-const logFile = path.join(__dirname, "blockIndexer.log");
+const logFile = path.join(__dirname, "log_blockIndexer.log");
 
 const logError = (message) => {
   const timestamp = new Date().toISOString();
@@ -58,10 +58,13 @@ const delay = (ms) => {
 
 const indexing = async () => {
   try {
-    let _headBlockNumber = await latestBlock();
+    const _headBlockNumber = await latestBlock();
+    // let _heighestBlock = 90000;
     let _heighestBlock = await heighestBlock();
-    // _heighestBlock + 1;
-    console.log("🚀 ~ indexing ~ heighestBlock:", _heighestBlock);
+
+    console.log(
+      `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
+    );
     logInfo(
       `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
     );
