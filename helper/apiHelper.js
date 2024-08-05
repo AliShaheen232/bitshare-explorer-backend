@@ -218,7 +218,31 @@ const getPaginatedBlocks = async (page, limit) => {
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
+    .lean()
     .exec();
+
+  for (let i = 0; i < blocks.length; i++) {
+    delete blocks[i].createdAt;
+    delete blocks[i].__v;
+    delete blocks[i]._id;
+
+    const entries = await Transaction.find({
+      block_number: blocks[i].block_number,
+    });
+
+    let _txObjects = [];
+
+    entries.forEach((entry) => {
+      _txObjects.push(refineTx(entry));
+    });
+
+    blocks[i] = refineBlock(blocks[i]);
+    blocks[i] = {
+      ...blocks[i],
+      transaction_count: blocks[i].transaction_count,
+      transactions: _txObjects,
+    };
+  }
   const pagBlockObject = {
     page,
     count: await Block.countDocuments(),
@@ -234,7 +258,13 @@ const getPaginatedTransactions = async (page, limit) => {
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
+    .lean()
     .exec();
+  for (let i = 0; i < txs.length; i++) {
+    delete txs[i].createdAt;
+    delete txs[i].__v;
+    delete txs[i]._id;
+  }
   const pagTXObject = {
     page,
     count: await Transaction.countDocuments(),
