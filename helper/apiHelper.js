@@ -88,7 +88,7 @@ const updateTransactionEntry = async (transaction) => {
       await updateAccountEntry([operationData.name]);
     }
 
-    operation[0] = operationName;
+    // operation[0] = operationName;
   });
 
   _txObject = _refineTx({ hash, ...transaction });
@@ -179,7 +179,29 @@ const _refineTx = (txObj) => {
   for (let i = 0; i < txObj.operations.length; i++) {
     const operationType = txObj.operations[i][0];
     const operationData = txObj.operations[i][1];
-    const operation = { operationType, operationData };
+
+    let operation = {};
+
+    if ("amount" in operationData) {
+      let amount = operationData.amount;
+      delete operationData.amount;
+      operation = { operationType, amount, operationData };
+    }
+
+    if ("memo" in operationData) {
+      let memo = operationData.memo;
+      delete operationData.memo;
+      if ("amount" in operation) {
+        operation = {
+          operationType,
+          amount: operation.amount,
+          memo,
+          operationData,
+        };
+      } else {
+        operation = { operationType, memo, operationData };
+      }
+    }
 
     txObj.operations[i] = operation;
   }
