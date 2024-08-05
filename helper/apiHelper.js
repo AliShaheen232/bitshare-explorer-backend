@@ -28,6 +28,7 @@ const updateBlockEntry = async (block_number) => {
     });
 
     blockObj = refineBlock(existingBlock);
+
     blockObj = {
       ...blockObj,
       transaction_count: existingBlock.transaction_count,
@@ -59,15 +60,16 @@ const updateBlockEntry = async (block_number) => {
 };
 
 const updateTransactionEntry = async (transaction) => {
-  let hash = "";
+  let transaction_hash = "";
+
   if (!"transaction_hash" in transaction) {
-    hash = computeTxHash(transaction);
+    transaction_hash = computeTxHash(transaction);
   } else {
-    hash = transaction.transaction_hash;
+    transaction_hash = transaction.transaction_hash;
   }
 
   const existingTransaction = await Transaction.findOne({
-    transaction_hash: hash,
+    transaction_hash,
   });
 
   let _txObject;
@@ -88,13 +90,13 @@ const updateTransactionEntry = async (transaction) => {
     // for operation type read "./operationType.js"
 
     if (operationType == 5) {
-      console.log(`${operationName}`, operation);
+      console.log(`93 ${operationName}`, operationData);
 
-      await updateAccountEntry([operationData.name]);
+      await updateAccountEntry(operationData.name);
     }
   });
 
-  _txObject = _refineTx({ hash, ...transaction });
+  _txObject = _refineTx({ transaction_hash, ...transaction });
 
   const newTransaction = new Transaction(_txObject);
   await newTransaction.save();
@@ -110,7 +112,6 @@ const updateAccountEntry = async (accountsIden) => {
   }
 
   let accountObject = [];
-
   const accounts = await Apis.instance()
     .db_api()
     .exec("get_accounts", [[accountsIden]]);
@@ -191,13 +192,12 @@ const _refineTx = (txObj) => {
     }
 
     operation.operationData = operationData;
-    console.log("🚀 ~ _refineTx:", operation);
 
     txObj.operations[i] = operation;
   }
 
   objects.transaction = {
-    transaction_hash: txObj.hash,
+    transaction_hash: txObj.transaction_hash,
     block_number,
     ref_block_num: txObj.ref_block_num,
     ref_block_prefix: txObj.ref_block_prefix,
@@ -378,7 +378,6 @@ const getLatestTransactions = async () => {
     }
   }
 
-  console.log(" getLatestTransactions ~ txs:", txs);
   return txs;
 };
 
@@ -396,7 +395,6 @@ const latestBlock = async () => {
 
 const fetchAssetByName = async (name) => {
   try {
-    console.log("🚀 ~ fetchAssetByName ~ name:", name);
     const asset = await Apis.instance()
       .db_api()
       .exec("lookup_asset_symbols", [[name]]);
@@ -427,7 +425,6 @@ const fetchAssetHolders = async () => {
   }
 };
 
-// fetchAssetHolders();
 module.exports = {
   updateBlockEntry,
   updateTransactionEntry,
