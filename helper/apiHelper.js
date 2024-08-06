@@ -67,7 +67,6 @@ const updateTransactionEntry = async (transaction) => {
   } else {
     transaction_hash = computeTxHash(transaction);
   }
-  console.log("transaction_hash:", transaction_hash);
 
   const existingTransaction = await Transaction.findOne({
     transaction_hash,
@@ -177,8 +176,10 @@ const _refineTx = (txObj) => {
   let block_number = txObj.block_number || null;
 
   for (let i = 0; i < txObj.operations.length; i++) {
-    const operationType = txObj.operations[i][0];
-    const operationData = txObj.operations[i][1];
+    const operationType =
+      txObj.operations[i].operationType || txObj.operations[i][0];
+    const operationData =
+      txObj.operations[i].operationData || txObj.operations[i][1];
 
     let operation = { operationType };
 
