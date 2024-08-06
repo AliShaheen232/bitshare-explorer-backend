@@ -309,6 +309,24 @@ const getStat = async () => {
     }
   }
 
+  const assetName = "RRC";
+  const asset = await fetchAssetByName(assetName);
+
+  const totalSupply = asset.dynamic_asset_data_id
+    ? await Apis.instance()
+        .db_api()
+        .exec("get_objects", [[asset.dynamic_asset_data_id]])
+    : null;
+
+  const readableDetails = {
+    symbol: asset.symbol,
+    max_supply: asset.options.max_supply / Math.pow(10, asset.precision),
+    current_supply: totalSupply
+      ? totalSupply[0].current_supply / Math.pow(10, asset.precision)
+      : "N/A",
+    precision: asset.precision,
+  };
+
   return {
     TPS: 0,
     accountCount: await Account.countDocuments(),
@@ -316,8 +334,8 @@ const getStat = async () => {
     transactionsCount: await Transaction.countDocuments(),
     operationsTotalCount,
     operationsCount,
+    RRC: readableDetails,
   };
-  // statObject;
 };
 
 const getPaginatedAccounts = async (page, limit) => {
