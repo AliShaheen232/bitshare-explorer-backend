@@ -26,20 +26,19 @@ const latestBlock = async () => {
     const blockchain = await Apis.instance()
       .db_api()
       .exec("get_dynamic_global_properties", []);
-    return blockchain.head_block_number - 7;
+    return blockchain.head_block_number - 1;
   } catch (error) {
     logError(`Error in latestBlock: ${error.message}`);
     throw error;
   }
 };
 
+
 const delay = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-const getLatestTransactions = async () => {
-  const block_number = await latestBlock();
-
+const getLatestTransactions = async (block_number) => {
   const block = await Apis.instance()
     .db_api()
     .exec("get_block", [block_number]);
@@ -49,6 +48,9 @@ const getLatestTransactions = async () => {
   let txs = [];
   if (Array.isArray(block.transactions)) {
     txCount = block.transactions.length;
+    console.log(
+      `Transaction indexer: block number is ${block_number} and transactions count are ${txCount}`
+    );
 
     for (let i = 0; i < txCount; i++) {
       let tx = { block_number, ...block.transactions[i] };
@@ -57,43 +59,34 @@ const getLatestTransactions = async () => {
     }
   }
 
-  console.log(" getLatestTransactions ~ txs:", txs);
   return txs;
 };
 
-const blockIndexer = async () => {
+const transactionIndexer = async () => {
   try {
     logInfo(`DB syncing started with latest transactions`);
     await initializeWebSocket();
 
     logInfo(`Updating DB with new transactions`);
 
-    let _lastBlockNumber = 0;
+    let _lastBlockNumber = (await latestBlock()) - 1;
     setInterval(async () => {
       try {
-        let currentBlockNumber = await latestBlock();
-        if (currentBlockNumber > _lastBlockNumber) {
-          console.log(
-            "setInterval ~ New block's transaction updated:",
-            currentBlockNumber
-          );
-          await getLatestTransactions();
-          _lastBlockNumber = currentBlockNumber;
+        const currentBlockNumber = await latestBlock();
+        if (_lastBlockNumber < currentBlockNumber) {
+          _lastBlockNumber++;
+          await getLatestTransactions(_lastBlockNumber);
         } else {
-          console.log(
-            `setInterval ~ No new block. Current block number: ${currentBlockNumber}`
-          );
+          console.log(`No new block. last block number: ${_lastBlockNumber}`);
         }
       } catch (error) {
         logError(`Error in setInterval: ${error.message}`);
       }
     }, 1000);
   } catch (error) {
-    // Log any errors that occur
     logError(`Error in indexer function: ${error.message}`);
-    blockIndexer();
+    setTimeout(transactionIndexer, 5000); // Retry after 5 seconds
   }
 };
-
 // module.exports = blockindexer;
-blockIndexer();
+transactionIndexer();

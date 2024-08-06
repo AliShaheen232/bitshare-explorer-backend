@@ -62,11 +62,12 @@ const updateBlockEntry = async (block_number) => {
 const updateTransactionEntry = async (transaction) => {
   let transaction_hash = "";
 
-  if (!"transaction_hash" in transaction) {
-    transaction_hash = computeTxHash(transaction);
-  } else {
+  if ("transaction_hash" in transaction) {
     transaction_hash = transaction.transaction_hash;
+  } else {
+    transaction_hash = computeTxHash(transaction);
   }
+  console.log("transaction_hash:", transaction_hash);
 
   const existingTransaction = await Transaction.findOne({
     transaction_hash,
