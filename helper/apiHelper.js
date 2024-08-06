@@ -47,6 +47,7 @@ const updateBlockEntry = async (block_number) => {
 
     for (let i = 0; i < txCount; i++) {
       let tx = { block_number, ...block.transactions[i] };
+      console.log("🚀 ~ updateBlockEntry 50 ~ tx:", tx);
       tx = await updateTransactionEntry(tx);
       _txObjects.push(refineTx(tx));
     }
@@ -250,10 +251,8 @@ const getPaginatedBlocks = async (page, limit) => {
       _txObjects.push(refineTx(entry));
     });
 
-    blocks[i] = refineBlock(blocks[i]);
     blocks[i] = {
       ...blocks[i],
-      transaction_count: blocks[i].transaction_count,
       transactions: _txObjects,
     };
   }
