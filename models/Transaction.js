@@ -9,6 +9,7 @@ const TransactionSchema = new mongoose.Schema({
   signatures: { type: Array, required: true },
   operations_count: { type: Number, required: true },
   operations: { type: Array, required: true },
+  timestamp: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 

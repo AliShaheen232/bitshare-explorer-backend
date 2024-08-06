@@ -46,8 +46,11 @@ const updateBlockEntry = async (block_number) => {
     txCount = block.transactions.length;
 
     for (let i = 0; i < txCount; i++) {
-      let tx = { block_number, ...block.transactions[i] };
-      console.log("🚀 ~ updateBlockEntry 50 ~ tx:", tx);
+      let tx = {
+        block_number,
+        timestamp: block.timestamp,
+        ...block.transactions[i],
+      };
       tx = await updateTransactionEntry(tx);
       _txObjects.push(refineTx(tx));
     }
@@ -164,6 +167,7 @@ const refineTx = (txObj) => {
     transaction_hash: txObj.transaction_hash,
     ref_block_num: txObj.ref_block_num,
     ref_block_prefix: txObj.ref_block_prefix,
+    timestamp: txObj.timestamp,
     expiration: txObj.expiration,
     signatures: txObj.signatures,
     operations_count: txObj.operations.length,
@@ -204,6 +208,7 @@ const _refineTx = (txObj) => {
     block_number,
     ref_block_num: txObj.ref_block_num,
     ref_block_prefix: txObj.ref_block_prefix,
+    timestamp: txObj.timestamp,
     expiration: txObj.expiration,
     signatures: txObj.signatures,
     operations_count: txObj.operations.length,

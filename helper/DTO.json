@@ -18,6 +18,7 @@
 
   "transaction": {
     "transaction_hash": "",
+    "timestamp": "",
     "block_number": 0,
     "ref_block_num": 0,
     "ref_block_prefix": 0,
