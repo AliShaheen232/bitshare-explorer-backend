@@ -181,16 +181,19 @@ const _refineTx = (txObj) => {
   let block_number = txObj.block_number || null;
 
   for (let i = 0; i < txObj.operations.length; i++) {
-    console.log("🚀 ~ txObj.operations:", txObj.operations);
-    let operation = {};
-
     const operationData =
       txObj.operations[i].operationData || txObj.operations[i][1];
 
-    operation.operationType =
-      txObj.operations[i].operationType || txObj.operations[i][0];
-    operation.amount = txObj.operations[i].amount || null;
-    operation.memo = txObj.operations[i].memo || null;
+    // Check for undefined specifically
+    const operationType =
+      txObj.operations[i].operationType !== undefined
+        ? txObj.operations[i].operationType
+        : txObj.operations[i][0];
+
+    let operation = { operationType };
+
+    operation.amount = txObj.operations[i].amount || undefined;
+    operation.memo = txObj.operations[i].memo || undefined;
 
     if ("amount" in operationData) {
       operation.amount = operationData.amount;
@@ -201,12 +204,10 @@ const _refineTx = (txObj) => {
       operation.memo = operationData.memo;
       delete operationData.memo;
     }
-    console.log("🚀 ~ operation:202", operation);
 
     operation.operationData = operationData;
 
     txObj.operations[i] = operation;
-    console.log("🚀 ~ operation208:", operation);
   }
 
   objects.transaction = {
