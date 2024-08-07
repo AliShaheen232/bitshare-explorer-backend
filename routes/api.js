@@ -296,27 +296,24 @@ const searchInput = async (input) => {
   input = input.trim();
 
   if (/^\d+$/.test(input)) {
-    return await _updateBlockEntry(input);
+    const block = await _updateBlockEntry(input);
+    return { type: "block", data: block };
   }
 
   if (/^[0-9a-fA-F]{40}$/.test(input)) {
-    return await _updateTransactionEntry(input);
+    const tx = await _updateTransactionEntry(input);
+    return { type: "transaction", data: tx };
   }
-
   // account ID check
-  if (/^[1-9]+\.\d+\.\d+$/.test(input)) {
-    return await _updateAccountEntry(input);
+  if (
+    /^[1-9]+\.\d+\.\d+$/.test(input) ||
+    /^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(input) ||
+    /^[a-zA-Z0-9]+$/.test(input)
+  ) {
+    const account = await _updateAccountEntry(input);
+    return { type: "account", data: account };
   }
 
-  // account name check
-  if (/^[a-zA-Z0-9]+$/.test(input)) {
-    return await _updateAccountEntry(input);
-  }
-
-  // base58 check
-  if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(input)) {
-    return await _updateAccountEntry(input);
-  }
   return null;
 };
 
