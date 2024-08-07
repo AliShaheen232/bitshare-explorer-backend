@@ -4,6 +4,7 @@ const connectDB = require("../db");
 const apiHelper = require("../helper/apiHelper");
 const AccountCount = require("../models/AccountCount");
 const Transaction = require("../models/Transaction");
+const { fetchAccountHistory } = require("../helper/accountHistory");
 const { asset } = require("bitsharesjs/dist/serializer/src/operations");
 
 const router = express.Router();
@@ -139,6 +140,19 @@ router.get("/account/fetchPubKey/:username", async (req, res) => {
     const pubKey = await apiHelper.getPublicKeys(userName);
 
     res.json(pubKey);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/account/history", async (req, res) => {
+  try {
+    const identifier = req.query.account;
+    const limit = parseInt(req.query.limit) || 25;
+
+    const history = await fetchAccountHistory(identifier, limit);
+
+    res.json(history);
   } catch (error) {
     res.status(500).send(error.message);
   }

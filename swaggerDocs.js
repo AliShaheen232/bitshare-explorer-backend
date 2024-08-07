@@ -59,6 +59,61 @@
  */
 /**
  * @swagger
+ * /api/account/history:
+ *   get:
+ *     summary: Retrieve account history
+ *     tags: [Accounts]
+ *     parameters:
+ *       - in: query
+ *         name: identifier
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The account ID, name, or public key to retrieve history for
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 25
+ *           maximum: 100
+ *         required: true
+ *         description: The number of history records to retrieve (between 25 and 100)
+ *     responses:
+ *       200:
+ *         description: A list of history records for the specified account
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   hash:
+ *                     type: string
+ *                     description: The transaction hash
+ *                   blockNumber:
+ *                     type: integer
+ *                     description: The block number where the transaction was recorded
+ *                   timestamp:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The timestamp of the transaction
+ *                   transactionId:
+ *                     type: string
+ *                     description: The transaction ID
+ *                   operation:
+ *                     type: object
+ *                     description: Details of the operation
+ *       400:
+ *         description: Bad request (e.g., invalid account format or limit out of range)
+ *       404:
+ *         description: Account not found or no history found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
  * /api/account/{accountIdent}:
  *   get:
  *     summary: Retrieve account data
