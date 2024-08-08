@@ -174,8 +174,9 @@ router.get("/account/history", async (req, res) => {
 router.get("/account/:accountIdent", async (req, res) => {
   try {
     const accountIdents = req.params.accountIdent;
+    const limit = parseInt(req.query.limit) || 25;
 
-    const accounts = await _updateAccountEntry(accountIdents);
+    const accounts = await _updateAccountEntry(accountIdents, limit);
 
     res.json(accounts);
   } catch (error) {
@@ -337,7 +338,8 @@ const searchInput = async (input) => {
     /^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(input) ||
     /^[a-zA-Z0-9]+$/.test(input)
   ) {
-    const account = await _updateAccountEntry(input);
+    const limit = 25;
+    const account = await _updateAccountEntry(input, limit);
     return { type: "account", data: account };
   }
 
@@ -367,8 +369,8 @@ const _updateTransactionEntry = async (transactionHash) => {
   return transaction;
 };
 
-const _updateAccountEntry = async (account) => {
-  return await apiHelper.updateAccountEntry(account);
+const _updateAccountEntry = async (account, limit) => {
+  return await apiHelper.updateAccountEntry(account, limit);
 };
 
 module.exports = router;

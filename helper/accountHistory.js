@@ -2,7 +2,7 @@ const { Apis } = require("bitsharesjs-ws");
 const { PublicKey } = require("bitsharesjs");
 const connectToBitShares = require("../connectNode");
 const { replaceBTSWithRR } = require("./converter");
-const { listenerCount } = require("../models/Transaction");
+const computeTxHash = require("./computeTxHash");
 
 function hexToString(hex) {
   hex = hex.replace(/^0x/, "");
@@ -77,40 +77,44 @@ async function fetchAccountHistory(accountId, limit) {
       let to = toAccount ? toAccount.name : item.op[1].to;
       from = await getPublicKey(from);
       to = await getPublicKey(to);
+      let operation = {
+        ...item.op,
+        1: {
+          ...item.op[1],
+          fee: item.op[1].fee
+            ? {
+                ...item.op[1].fee,
+                asset_id: feeAsset ? feeAsset.symbol : item.op[1].fee.asset_id,
+              }
+            : {},
+          from,
+          to,
+          amount: item.op[1].amount
+            ? {
+                amount: amountAsset
+                  ? item.op[1].amount.amount /
+                    Math.pow(10, amountAsset.precision)
+                  : item.op[1].amount.amount,
+                asset_id: amountAsset
+                  ? amountAsset.symbol
+                  : item.op[1].amount.asset_id,
+              }
+            : {},
+          memo: memo,
+        },
+      };
 
+      let operations = new Array(2);
+      operations[1] = operation;
+      let transactions = { operations };
+      const hash = await computeTxHash(transactions);
+      console.log("🚀 ~ history.map ~ hash:", hash);
       return {
         hash: item.trx_id || item.id,
         blockNumber: item.block_num,
         timestamp: item.block_time,
         transactionId: item.trx_id || item.id,
-        operation: {
-          ...item.op,
-          1: {
-            ...item.op[1],
-            fee: item.op[1].fee
-              ? {
-                  ...item.op[1].fee,
-                  asset_id: feeAsset
-                    ? feeAsset.symbol
-                    : item.op[1].fee.asset_id,
-                }
-              : {},
-            from,
-            to,
-            amount: item.op[1].amount
-              ? {
-                  amount: amountAsset
-                    ? item.op[1].amount.amount /
-                      Math.pow(10, amountAsset.precision)
-                    : item.op[1].amount.amount,
-                  asset_id: amountAsset
-                    ? amountAsset.symbol
-                    : item.op[1].amount.asset_id,
-                }
-              : {},
-            memo: memo,
-          },
-        },
+        operation,
       };
     })
   );

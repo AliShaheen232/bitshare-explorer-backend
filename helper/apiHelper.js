@@ -8,6 +8,8 @@ const OperationCount = require("../models/OperationCount");
 const objects = require("./DTO.json");
 const getOperationType = require("./operationType");
 const computeTxHash = require("./computeTxHash");
+const getAssetBalance = require("../helper/checkBalance");
+const { fetchAccountHistory } = require("../helper/accountHistory");
 
 connectDB();
 
@@ -43,6 +45,7 @@ const updateBlockEntry = async (block_number) => {
   if (block == null) return null;
 
   if (Array.isArray(block.transactions)) {
+    console.log("🚀 ~ updateBlockEntry ~ block.transactions:", block.transactions)
     txCount = block.transactions.length;
 
     for (let i = 0; i < txCount; i++) {
@@ -107,7 +110,7 @@ const updateTransactionEntry = async (transaction) => {
   return _txObject;
 };
 
-const updateAccountEntry = async (accountsIden) => {
+const updateAccountEntry = async (accountsIden, limit) => {
   if (/^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(accountsIden)) {
     // if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(accountsIden)) {
     let keyRef = await Apis.instance()
@@ -116,6 +119,10 @@ const updateAccountEntry = async (accountsIden) => {
     accountsIden = keyRef[0][0];
     console.log("🚀 ~ accountsIden:", accountsIden);
   }
+
+  const assetSymbol = "RRC";
+  const historyObj = await fetchAccountHistory(accountsIden, limit);
+  const balanceObj = await getAssetBalance(accountsIden, assetSymbol);
 
   let accountObject = [];
   const accounts = await Apis.instance()
@@ -127,6 +134,7 @@ const updateAccountEntry = async (accountsIden) => {
       account_id: accounts[i].id,
       name: accounts[i].name,
       public_key: accounts[i].owner.key_auths[0][0],
+      balance: balanceObj.balance,
       data: accounts[i],
     };
 
@@ -141,8 +149,10 @@ const updateAccountEntry = async (accountsIden) => {
       await newAccount.save();
     }
   }
-
-  return accountObject;
+  return {
+    publicKey: accountObject[0],
+    history: historyObj.history,
+  };
 };
 
 const updateOperationType = async (type) => {

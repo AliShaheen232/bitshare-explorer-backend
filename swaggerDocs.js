@@ -74,9 +74,8 @@
  *         name: limit
  *         schema:
  *           type: integer
- *           minimum: 25
+ *           default: 25
  *           maximum: 100
- *         required: true
  *         description: The number of history records to retrieve (between 25 and 100)
  *     responses:
  *       200:
@@ -126,9 +125,15 @@
  *         description: Identifier of the account to retrieve
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 25
+ *         description: The number of history records to retrieve
  *     responses:
  *       200:
- *         description: Account data
+ *         description: Account data and a list of history records for the specified account
  *       500:
  *         description: Server error
  */

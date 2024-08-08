@@ -37,6 +37,7 @@ const sanitizeExtensions = (extensions) => {
 
 // Function to compute the transaction ID (hash) with 40-character length
 const computeTxHash = (transaction) => {
+  console.log("🚀 ~ computeTxHash ~ transaction:", transaction);
   // Adjust the transaction to have the correct public key format and sanitize extensions
   transaction.operations.forEach((operation) => {
     convertKeys(operation[1]);
