@@ -1,11 +1,8 @@
 const { Apis } = require("bitsharesjs-ws");
-const { ChainStore } = require("bitsharesjs");
 const connectToBitShares = require("../connectNode");
 
 async function getAssetBalance(accountId, assetSymbol) {
   try {
-  
-
     const asset = (
       await Apis.instance()
         .db_api()
@@ -37,8 +34,6 @@ async function getAssetBalance(accountId, assetSymbol) {
   } catch (error) {
     console.error("Error fetching account balance:", error);
     throw error;
-  } finally {
-    Apis.close();
   }
 }
 
