@@ -108,11 +108,13 @@ const updateTransactionEntry = async (transaction) => {
 };
 
 const updateAccountEntry = async (accountsIden) => {
-  if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(accountsIden)) {
+  if (/^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(accountsIden)) {
+    // if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(accountsIden)) {
     let keyRef = await Apis.instance()
       .db_api()
       .exec("get_key_references", [[accountsIden]]);
     accountsIden = keyRef[0][0];
+    console.log("🚀 ~ accountsIden:", accountsIden);
   }
 
   let accountObject = [];

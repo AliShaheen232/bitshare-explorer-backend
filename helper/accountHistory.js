@@ -120,11 +120,11 @@ async function fetchAccountHistory(accountId, limit) {
     .db_api()
     .exec("get_accounts", [[accountId]]);
 
-  const txs = {
+  const historyObj = {
     account: await getPublicKey(account[0].name),
     history: updatedHistory,
   };
-  return txs;
+  return historyObj;
 }
 
 const getPublicKey = async (accountID) => {

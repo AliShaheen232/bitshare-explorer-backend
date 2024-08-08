@@ -5,7 +5,7 @@ const apiHelper = require("../helper/apiHelper");
 const AccountCount = require("../models/AccountCount");
 const Transaction = require("../models/Transaction");
 const { fetchAccountHistory } = require("../helper/accountHistory");
-const { asset } = require("bitsharesjs/dist/serializer/src/operations");
+const getAssetBalance = require("../helper/checkBalance");
 
 const router = express.Router();
 
@@ -147,12 +147,25 @@ router.get("/account/fetchPubKey/:username", async (req, res) => {
 
 router.get("/account/history", async (req, res) => {
   try {
-    const identifier = req.query.account;
+    let identifier = req.query.account;
     const limit = parseInt(req.query.limit) || 25;
 
-    const history = await fetchAccountHistory(identifier, limit);
+    if (/^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(identifier)) {
+      let keyRef = await Apis.instance()
+        .db_api()
+        .exec("get_key_references", [[identifier]]);
+      identifier = keyRef[0][0];
+    }
 
-    res.json(history);
+    const assetSymbol = "RRC";
+    const historyObj = await fetchAccountHistory(identifier, limit);
+    const balanceObj = await getAssetBalance(identifier, assetSymbol);
+    const accountObj = {
+      publicKey: historyObj.account,
+      balance: balanceObj.balance,
+      history: historyObj.history,
+    };
+    res.json(accountObj);
   } catch (error) {
     res.status(500).send(error.message);
   }
