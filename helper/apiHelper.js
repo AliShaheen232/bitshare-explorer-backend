@@ -8,8 +8,8 @@ const OperationCount = require("../models/OperationCount");
 const objects = require("./DTO.json");
 const getOperationType = require("./operationType");
 const computeTxHash = require("./computeTxHash");
-const getAssetBalance = require("../helper/checkBalance");
-const { fetchAccountHistory } = require("../helper/accountHistory");
+const getAssetBalance = require("./checkBalance");
+const { fetchAccountHistory } = require("./accountHistory");
 
 connectDB();
 

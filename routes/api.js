@@ -6,7 +6,7 @@ const AccountCount = require("../models/AccountCount");
 const Transaction = require("../models/Transaction");
 const { fetchAccountHistory } = require("../helper/accountHistory");
 const getAssetBalance = require("../helper/checkBalance");
-const getObjectDetails = require("../helper/txID");
+const getObjectDetails = require("../helper/txByID");
 
 const router = express.Router();
 
