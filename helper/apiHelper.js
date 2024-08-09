@@ -45,13 +45,12 @@ const updateBlockEntry = async (block_number) => {
   if (block == null) return null;
 
   if (Array.isArray(block.transactions)) {
-    console.log("🚀 ~ updateBlockEntry ~ block.transactions:", block.transactions)
     txCount = block.transactions.length;
 
     for (let i = 0; i < txCount; i++) {
       let tx = {
         block_number,
-        timestamp: block.timestamp,
+        timestamp: new Date(block.timestamp),
         ...block.transactions[i],
       };
       tx = await updateTransactionEntry(tx);
@@ -99,7 +98,7 @@ const updateTransactionEntry = async (transaction) => {
     if (operationType == 5) {
       console.log(`93 ${operationName}`, operationData);
 
-      await updateAccountEntry(operationData.name);
+      await _updateAccountEntry(operationData.name);
     }
   });
 
@@ -110,18 +109,8 @@ const updateTransactionEntry = async (transaction) => {
   return _txObject;
 };
 
-const updateAccountEntry = async (accountsIden, limit) => {
-  if (/^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(accountsIden)) {
-    // if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(accountsIden)) {
-    let keyRef = await Apis.instance()
-      .db_api()
-      .exec("get_key_references", [[accountsIden]]);
-    accountsIden = keyRef[0][0];
-    console.log("🚀 ~ accountsIden:", accountsIden);
-  }
-
+const _updateAccountEntry = async (accountsIden) => {
   const assetSymbol = "RRC";
-  const historyObj = await fetchAccountHistory(accountsIden, limit);
   const balanceObj = await getAssetBalance(accountsIden, assetSymbol);
 
   let accountObject = [];
@@ -135,6 +124,7 @@ const updateAccountEntry = async (accountsIden, limit) => {
       name: accounts[i].name,
       public_key: accounts[i].owner.key_auths[0][0],
       balance: balanceObj.balance,
+      creation_time: new Date(accounts[i].creation_time),
       data: accounts[i],
     };
 
@@ -149,8 +139,23 @@ const updateAccountEntry = async (accountsIden, limit) => {
       await newAccount.save();
     }
   }
+  return accountObject;
+};
+
+const updateAccountEntry = async (accountsIden, limit) => {
+  if (/^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(accountsIden)) {
+    // if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(accountsIden)) {
+    let keyRef = await Apis.instance()
+      .db_api()
+      .exec("get_key_references", [[accountsIden]]);
+    accountsIden = keyRef[0][0];
+  }
+
+  let accountObject = await _updateAccountEntry(accountsIden);
+  const historyObj = await fetchAccountHistory(accountsIden, limit);
+
   return {
-    publicKey: accountObject[0],
+    account: accountObject[0],
     history: historyObj.history,
   };
 };
@@ -175,11 +180,18 @@ const _updateOperationType = async (type) => {
 };
 
 const refineTx = (txObj) => {
+  let timestamp = txObj.timestamp;
+  if (!(timestamp instanceof Date)) {
+    console.log("🚀 ~ timestamp: 183", timestamp);
+
+    timestamp = new Date(timestamp);
+  }
+
   objects.transaction = {
     transaction_hash: txObj.transaction_hash,
     ref_block_num: txObj.ref_block_num,
     ref_block_prefix: txObj.ref_block_prefix,
-    timestamp: txObj.timestamp,
+    timestamp,
     expiration: txObj.expiration,
     signatures: txObj.signatures,
     operations_count: txObj.operations.length,
@@ -190,6 +202,12 @@ const refineTx = (txObj) => {
 };
 
 const _refineTx = (txObj) => {
+  let timestamp = txObj.timestamp;
+
+  if (timestamp === undefined) {
+    timestamp = new Date();
+  }
+
   let block_number = txObj.block_number || null;
 
   for (let i = 0; i < txObj.operations.length; i++) {
@@ -227,7 +245,7 @@ const _refineTx = (txObj) => {
     block_number,
     ref_block_num: txObj.ref_block_num,
     ref_block_prefix: txObj.ref_block_prefix,
-    timestamp: txObj.timestamp,
+    timestamp,
     expiration: txObj.expiration,
     signatures: txObj.signatures,
     operations_count: txObj.operations.length,

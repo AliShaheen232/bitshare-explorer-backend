@@ -6,6 +6,7 @@ const AccountCount = require("../models/AccountCount");
 const Transaction = require("../models/Transaction");
 const { fetchAccountHistory } = require("../helper/accountHistory");
 const getAssetBalance = require("../helper/checkBalance");
+const getObjectDetails = require("../helper/txID");
 
 const router = express.Router();
 
@@ -328,19 +329,25 @@ const searchInput = async (input) => {
     return { type: "block", data: block };
   }
 
-  if (/^[0-9a-fA-F]{40}$/.test(input)) {
-    const tx = await _updateTransactionEntry(input);
-    return { type: "transaction", data: tx };
-  }
-  // account ID check
   if (
-    /^[1-9]+\.\d+\.\d+$/.test(input) ||
+    /^1\.2\.\d+$/.test(input) ||
     /^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(input) ||
-    /^[a-zA-Z0-9]+$/.test(input)
+    /^[a-zA-Z0-9-]+$/.test(input)
   ) {
     const limit = 25;
     const account = await _updateAccountEntry(input, limit);
     return { type: "account", data: account };
+  }
+
+  if (/^(?!.*-)[0-9a-fA-F]{40}$/.test(input)) {
+    console.log("🚀 ~ searchInput 342~ input:", input);
+    const tx = await _updateTransactionEntry(input);
+    return { type: "transaction", data: tx };
+  }
+  if (/^1\.11\.\d+$/.test(input)) {
+    console.log("🚀 ~ searchInput 342~ input:", input);
+    const tx = await getObjectDetails(input);
+    return { type: "transaction", data: tx };
   }
 
   return null;

@@ -33,7 +33,6 @@ const latestBlock = async () => {
   }
 };
 
-
 const delay = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
@@ -53,7 +52,11 @@ const getLatestTransactions = async (block_number) => {
     );
 
     for (let i = 0; i < txCount; i++) {
-      let tx = { block_number, ...block.transactions[i] };
+      let tx = {
+        block_number,
+        timestamp: new Date(block.timestamp),
+        ...block.transactions[i],
+      };
       tx = await apiHelper.updateTransactionEntry(tx);
       txs.push(tx);
     }

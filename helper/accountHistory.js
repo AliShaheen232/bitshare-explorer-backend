@@ -104,11 +104,6 @@ async function fetchAccountHistory(accountId, limit) {
         },
       };
 
-      let operations = new Array(2);
-      operations[1] = operation;
-      let transactions = { operations };
-      const hash = await computeTxHash(transactions);
-      console.log("🚀 ~ history.map ~ hash:", hash);
       return {
         hash: item.trx_id || item.id,
         blockNumber: item.block_num,
