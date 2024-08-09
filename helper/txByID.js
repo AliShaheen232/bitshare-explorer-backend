@@ -23,11 +23,13 @@ const parseObjectDetails = async (object) => {
     console.log("Object not found.");
     return;
   }
+  let from = (await getPublicKey(object.op[1].from)) || object.op[1].from;
+  let to = (await getPublicKey(object.op[1].to)) || object.op[1].to;
 
   return {
     id: object.id,
-    from: await getPublicKey(object.op[1].from),
-    to: await getPublicKey(object.op[1].to),
+    from,
+    to,
     amount: object.op[1].amount,
     fee: object.op[1].fee,
     memo: object.op[1].memo,
