@@ -2,7 +2,7 @@ const { Apis } = require("bitsharesjs-ws");
 const { PublicKey } = require("bitsharesjs");
 const connectToBitShares = require("../connectNode");
 const { replaceBTSWithRR } = require("./converter");
-const computeTxHash = require("./computeTxHash");
+const getPublicKey = require("./getPublicKey");
 
 function hexToString(hex) {
   hex = hex.replace(/^0x/, "");
@@ -125,13 +125,5 @@ async function fetchAccountHistory(accountId, limit) {
   };
   return historyObj;
 }
-
-const getPublicKey = async (accountID) => {
-  const accounts = await Apis.instance()
-    .db_api()
-    .exec("get_accounts", [[accountID]]);
-  let account = Array.isArray(accounts) ? accounts[0] : null;
-  return account !== null ? account.owner.key_auths[0][0] : null;
-};
 
 module.exports = { fetchAccountHistory };

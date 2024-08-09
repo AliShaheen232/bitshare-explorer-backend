@@ -1,7 +1,8 @@
 const initializeWebSocket = require("../connectNode");
 const { Apis } = require("bitsharesjs-ws");
+const getPublicKey = require("./getPublicKey");
 
-async function getObjectDetails(objectId) {
+const getObjectDetails = async (objectId) => {
   try {
     // await initializeWebSocket();
 
@@ -15,9 +16,9 @@ async function getObjectDetails(objectId) {
     console.error("Error fetching object details:", error);
     throw error;
   }
-}
+};
 
-function parseObjectDetails(object) {
+const parseObjectDetails = async (object) => {
   if (!object) {
     console.log("Object not found.");
     return;
@@ -25,15 +26,15 @@ function parseObjectDetails(object) {
 
   return {
     id: object.id,
-    from: object.op[1].from,
-    to: object.op[1].to,
+    from: await getPublicKey(object.op[1].from),
+    to: await getPublicKey(object.op[1].to),
     amount: object.op[1].amount,
     fee: object.op[1].fee,
     memo: object.op[1].memo,
     block_num: object.block_num,
     block_time: object.block_time,
   };
-}
+};
 module.exports = getObjectDetails;
 // getObjectDetails(objectId)
 //   .then((details) => {
