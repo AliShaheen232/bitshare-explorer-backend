@@ -12,7 +12,6 @@ const getObjectDetails = async (objectId) => {
       .exec("get_objects", [[objectId]]);
 
     object = await parseObjectDetails(object[0]);
-    console.log("🚀 ~ getObjectDetails ~ object:", object);
     return object;
   } catch (error) {
     console.error("Error fetching object details:", error);
@@ -21,7 +20,6 @@ const getObjectDetails = async (objectId) => {
 };
 
 const parseObjectDetails = async (object) => {
-  console.log("🚀 ~ parseObjectDetails ~ object:", object);
   if (!object) {
     console.log("Object not found.");
     return;
