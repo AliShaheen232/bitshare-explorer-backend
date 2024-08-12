@@ -1,12 +1,12 @@
 const express = require("express");
 const { Apis } = require("bitsharesjs-ws");
 const connectDB = require("../db");
-const apiHelper = require("../helper/apiHelper");
+const apiHelper = require("./apiHelper");
 const AccountCount = require("../models/AccountCount");
 const Transaction = require("../models/Transaction");
-const { fetchAccountHistory } = require("../helper/accountHistory");
-const getAssetBalance = require("../helper/checkBalance");
-const getObjectDetails = require("../helper/txByID");
+const { fetchAccountHistory } = require("../utils/accountHistory");
+const getAssetBalance = require("../utils/checkBalance");
+const getObjectDetails = require("../utils/txByID");
 
 const router = express.Router();
 
@@ -129,18 +129,6 @@ router.get("/accounts", async (req, res) => {
     const accounts = await apiHelper.getPaginatedAccounts(page, limit);
 
     res.json(accounts);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
-router.get("/account/fetchPubKey/:username", async (req, res) => {
-  try {
-    const userName = req.params.username;
-
-    const pubKey = await apiHelper.getPublicKeys(userName);
-
-    res.json(pubKey);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -283,6 +271,7 @@ router.get("/assets/:name", async (req, res) => {
   }
 });
 
+// API not working
 router.get("/assets/:assetId/holders", async (req, res) => {
   try {
     const { assetId } = req.params;

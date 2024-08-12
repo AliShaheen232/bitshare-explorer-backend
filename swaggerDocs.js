@@ -33,32 +33,6 @@
  */
 /**
  * @swagger
- * /api/account/fetchPubKey/{username}:
- *   get:
- *     summary: Retrieve public keys for a specific account
- *     tags: [Accounts]
- *     parameters:
- *       - in: path
- *         name: username
- *         schema:
- *           type: string
- *         required: true
- *         description: The username of the account to retrieve public keys for
- *     responses:
- *       200:
- *         description: A list of public keys for the specified account
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: string
- *                 description: A public key
- *       500:
- *         description: Server error
- */
-/**
- * @swagger
  * /api/account/history:
  *   get:
  *     summary: Retrieve account history

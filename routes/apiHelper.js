@@ -5,11 +5,11 @@ const Account = require("../models/Account");
 const Transaction = require("../models/Transaction");
 const Block = require("../models/Block");
 const OperationCount = require("../models/OperationCount");
-const objects = require("./DTO.json");
-const getOperationType = require("./operationType");
-const computeTxHash = require("./computeTxHash");
-const getAssetBalance = require("./checkBalance");
-const { fetchAccountHistory } = require("./accountHistory");
+const objects = require("../utils/DTO.json");
+const getOperationType = require("../utils/operationType");
+const computeTxHash = require("../utils/computeTxHash");
+const getAssetBalance = require("../utils/checkBalance");
+const { fetchAccountHistory } = require("../utils/accountHistory");
 
 connectDB();
 
@@ -389,36 +389,6 @@ const getPaginatedAccounts = async (page, limit) => {
   return pagAccountObject;
 };
 
-const getPublicKeys = async (username) => {
-  try {
-    const existingAccount = await Account.findOne({
-      name: username,
-    });
-
-    if (existingAccount) {
-      return existingAccount.public_key;
-    } else {
-      const account = await Apis.instance()
-        .db_api()
-        .exec("get_account_by_name", [username]);
-
-      if (!account) {
-        console.error("Account not existed");
-        return;
-      }
-
-      // Extract public keys from the account details
-      const ownerPubKey = account.owner.key_auths[0][0];
-      // const activePubKey = account.active.key_auths[0][0];
-      // const memoPubKey = account.options.memo_key;
-
-      return ownerPubKey;
-    }
-  } catch (error) {
-    console.error("Error fetching account details:", error.message);
-  }
-};
-
 const getLatestTransactions = async () => {
   const block_number = await latestBlock();
 
@@ -496,7 +466,6 @@ module.exports = {
   getLatestTransactions,
   getTotalAssets,
   getStat,
-  getPublicKeys,
   fetchAssetByName,
   fetchAssetHolders,
 };

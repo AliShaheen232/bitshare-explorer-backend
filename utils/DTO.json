@@ -26,5 +26,14 @@
     "signatures": [],
     "operations_count": 0,
     "operations": []
+  },
+  "transactions_count": {
+    "timestamp": "",
+    "data": [
+      {
+        "days": 0,
+        "count": 0
+      }
+    ]
   }
 }

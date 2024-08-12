@@ -1,11 +1,5 @@
-require("dotenv").config();
-const WebSocket = require("ws");
 const { ChainStore, FetchChain } = require("bitsharesjs");
 const { Apis } = require("bitsharesjs-ws");
-const connectToNode = require("./connectNode");
-
-const port = process.env.WITNESS_PORT || 4000;
-const wss = new WebSocket.Server({ port });
 
 const getWitnessesAndVotes = async () => {
   try {
@@ -48,26 +42,10 @@ const getWitnessesAndVotes = async () => {
     );
 
     const witness = JSON.stringify(witnessData, null, 2);
-    console.log("Witnesses and their votes:", witness);
     return witness;
   } catch (error) {
     console.error("Error fetching witnesses and their votes:", error);
   }
 };
 
-wss.on("connection", async (ws) => {
-  await connectToNode();
-
-  console.log("Client connected");
-
-  setInterval(async () => {
-    const data = await getWitnessesAndVotes();
-    ws.send(JSON.stringify(data));
-  }, 3000);
-
-  ws.on("close", () => {
-    console.log("Client disconnected");
-  });
-});
-
-console.log(`WebSocket server is running on ws://localhost:${port}`);
+module.exports = getWitnessesAndVotes;

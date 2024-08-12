@@ -10,7 +10,8 @@ const getObjectDetails = async (objectId) => {
       .db_api()
       .exec("get_objects", [[objectId]]);
 
-    object = parseObjectDetails(object[0]);
+    object = await parseObjectDetails(object[0]);
+    console.log("🚀 ~ getObjectDetails ~ object:", object);
     return object;
   } catch (error) {
     console.error("Error fetching object details:", error);
