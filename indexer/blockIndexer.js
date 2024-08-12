@@ -2,7 +2,7 @@ require("dotenv").config();
 const { Apis } = require("bitsharesjs-ws");
 const initializeWebSocket = require("../connectNode");
 const connectDB = require("../db");
-const apiHelper = require("../helper/apiHelper");
+const apiHelper = require("../utils/apiHelper");
 const Block = require("../models/Block");
 const fs = require("fs");
 const path = require("path");

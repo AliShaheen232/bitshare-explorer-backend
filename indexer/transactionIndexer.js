@@ -1,7 +1,7 @@
 const { Apis } = require("bitsharesjs-ws");
 const initializeWebSocket = require("../connectNode");
 const connectDB = require("../db");
-const apiHelper = require("../helper/apiHelper");
+const apiHelper = require("../utils/apiHelper");
 const fs = require("fs");
 const path = require("path");
 
