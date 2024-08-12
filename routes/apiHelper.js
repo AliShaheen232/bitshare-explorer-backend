@@ -98,7 +98,7 @@ const updateTransactionEntry = async (transaction) => {
     if (operationType == 5) {
       console.log(`93 ${operationName}`, operationData);
 
-      await _updateAccountEntry(operationData.name);
+      await updateAccountDetail(operationData.name);
     }
   });
 
@@ -109,7 +109,7 @@ const updateTransactionEntry = async (transaction) => {
   return _txObject;
 };
 
-const _updateAccountEntry = async (accountsIden) => {
+const updateAccountDetail = async (accountsIden) => {
   const assetSymbol = "RRC";
   const balanceObj = await getAssetBalance(accountsIden, assetSymbol);
 
@@ -151,7 +151,7 @@ const updateAccountEntry = async (accountsIden, limit) => {
     accountsIden = keyRef[0][0];
   }
 
-  let accountObject = await _updateAccountEntry(accountsIden);
+  let accountObject = await updateAccountDetail(accountsIden);
   const historyObj = await fetchAccountHistory(accountsIden, limit);
 
   return {
@@ -460,6 +460,7 @@ module.exports = {
   updateBlockEntry,
   updateTransactionEntry,
   updateAccountEntry,
+  updateAccountDetail,
   getPaginatedBlocks,
   getPaginatedTransactions,
   getPaginatedAccounts,

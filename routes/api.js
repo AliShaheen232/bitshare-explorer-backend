@@ -333,6 +333,7 @@ const searchInput = async (input) => {
     const tx = await _updateTransactionEntry(input);
     return { type: "transaction", data: tx };
   }
+  
   if (/^1\.11\.\d+$/.test(input)) {
     console.log("🚀 ~ searchInput 342~ input:", input);
     const tx = await getObjectDetails(input);
