@@ -26,12 +26,47 @@ const getTransactionCounts = async (diff) => {
     },
     {
       $group: {
-        _id: {
-          $dateToString: {
-            format: "%Y-%U",
-            date: "$timestamp",
-          },
+        _id: null, // No need to group by date
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  if (count.length > 0) {
+    return count[0].count;
+  } else {
+    return 0;
+  }
+};
+
+const lessThenMonth = async () => {
+  let endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - 30);
+
+  let count = 0;
+
+  if (!(startDate instanceof Date)) {
+    startDate = new Date(startDate);
+  }
+  const oldestTX = (await Transaction.find().sort({ timestamp: 1 }).limit(1))[0]
+    .timestamp;
+  const latestTX = (
+    await Transaction.find().sort({ timestamp: -1 }).limit(1)
+  )[0].timestamp;
+
+  count = await Transaction.aggregate([
+    {
+      $match: {
+        timestamp: {
+          $gte: oldestTX,
+          $lt: startDate,
         },
+      },
+    },
+    {
+      $group: {
+        _id: null, // No need to group by date
         count: { $sum: 1 },
       },
     },
@@ -39,17 +74,23 @@ const getTransactionCounts = async (diff) => {
       $sort: { _id: 1 },
     },
   ]);
-  return count[0].count;
+  if (count.length > 0) {
+    return count[0].count;
+  } else {
+    return 0;
+  }
 };
 
 const transactionsCountStatus = async () => {
-  let days = [1, 7, 14, 30, 31];
+  let days = [1, 7, 14, 30];
   let data = new Array(5);
 
   for (let i = 0; i < days.length; i++) {
     const count = await getTransactionCounts(days[i]);
     data[i] = { days: days[i], count };
   }
+  const monthCount = await lessThenMonth();
+  data[data.length - 1] = { days: 31, monthCount };
 
   return { timestamp: new Date(), data };
 };

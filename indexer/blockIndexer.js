@@ -62,9 +62,6 @@ const indexing = async () => {
     // let _heighestBlock = 90000;
     let _heighestBlock = await heighestBlock();
 
-    console.log(
-      `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
-    );
     logInfo(
       `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
     );
@@ -98,7 +95,6 @@ const blockIndexer = async () => {
       try {
         let currentBlockNumber = await latestBlock();
         if (currentBlockNumber > _lastBlockNumber) {
-          console.log("setInterval ~ New block updated:", currentBlockNumber);
           await apiHelper.updateBlockEntry(currentBlockNumber);
           _lastBlockNumber = currentBlockNumber;
         } else {

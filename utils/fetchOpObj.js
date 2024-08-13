@@ -65,4 +65,4 @@ const parseObjectDetails = async (object) => {
     };
   }
 };
-module.exports = getObjectDetails;
+module.exports = { getObjectDetails, parseObjectDetails };

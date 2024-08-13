@@ -6,7 +6,7 @@ const AccountCount = require("../models/AccountCount");
 const Transaction = require("../models/Transaction");
 const { fetchAccountHistory } = require("../utils/accountHistory");
 const getAssetBalance = require("../utils/checkBalance");
-const getObjectDetails = require("../utils/txByID");
+const opObj = require("../utils/fetchOpObj");
 
 const router = express.Router();
 
@@ -305,8 +305,6 @@ router.get("/accounts/:lowerBoundName", async (req, res) => {
     .db_api()
     .exec("lookup_accounts", [lowerBoundName, limit]);
 
-  // Call the lookup_accounts API method
-  console.log(result);
   return res.json(result);
 });
 
@@ -334,7 +332,7 @@ const searchInput = async (input) => {
   }
 
   if (/^1\.11\.\d+$/.test(input)) {
-    const tx = await getObjectDetails(input);
+    const tx = await opObj.getObjectDetails(input);
     return { type: "transaction", data: tx };
   }
 
