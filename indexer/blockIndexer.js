@@ -73,6 +73,7 @@ const indexing = async () => {
     }
     logInfo(`Initial loop ends: ${_heighestBlock}`);
   } catch (error) {
+    readFile.writeToFile(_heighestBlock);
     logError(`Error in indexing: ${error.message}`);
   }
 };
