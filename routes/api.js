@@ -318,6 +318,11 @@ const searchInput = async (input) => {
     return { type: "block", data: block };
   }
 
+  if (/^[0-9a-fA-F]{40}$/.test(input)) {
+    const tx = await _updateTransactionEntry(input);
+    return { type: "transaction", data: tx };
+  }
+
   if (
     /^1\.2\.\d+$/.test(input) ||
     /^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(input) ||
@@ -328,14 +333,7 @@ const searchInput = async (input) => {
     return { type: "account", data: account };
   }
 
-  if (/^(?!.*-)[0-9a-fA-F]{40}$/.test(input)) {
-    console.log("🚀 ~ searchInput 342~ input:", input);
-    const tx = await _updateTransactionEntry(input);
-    return { type: "transaction", data: tx };
-  }
-  
   if (/^1\.11\.\d+$/.test(input)) {
-    console.log("🚀 ~ searchInput 342~ input:", input);
     const tx = await getObjectDetails(input);
     return { type: "transaction", data: tx };
   }
