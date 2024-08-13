@@ -212,7 +212,6 @@ const _refineTx = async (txObj) => {
   let block_number = txObj.block_number || null;
 
   for (let i = 0; i < txObj.operations.length; i++) {
-    console.log("🚀 ~ const_refineTx= ~ txObj.operations:", txObj.operations);
     const operationData =
       txObj.operations[i].operationData || txObj.operations[i][1];
 
@@ -228,10 +227,10 @@ const _refineTx = async (txObj) => {
     operation.memo = txObj.operations[i].memo || undefined;
 
     if ("amount" in operationData) {
-      const amountAsset =
-        (await fetchAssetByName(operationData.amount.asset_id)) ||
-        operationData.amount.asset_id;
-      operationData.amount.asset_id = amountAsset.symbol;
+      operationData.amount.asset_id =
+        operationData.amount.asset_id === "1.3.0"
+          ? "BTS"
+          : operationData.amount.asset_id;
       operation.amount = operationData.amount;
       delete operationData.amount;
     }
@@ -242,15 +241,16 @@ const _refineTx = async (txObj) => {
     }
 
     if ("fee" in operationData) {
-      const feeAsset =
-        (await fetchAssetByName(operationData.fee.asset_id)) ||
-        operationData.fee.asset_id;
-      operationData.fee.asset_id = feeAsset.symbol;
+      operationData.fee.asset_id =
+        operationData.fee.asset_id === "1.3.0"
+          ? "BTS"
+          : operationData.fee.asset_id;
     }
 
     if ("from" in operationData) {
       operationData.from =
         (await getPublicKey(operationData.from)) || operationData.from;
+
       operationData.to =
         (await getPublicKey(operationData.to)) || operationData.to;
     }
@@ -260,40 +260,40 @@ const _refineTx = async (txObj) => {
       operationData.payer =
         (await getPublicKey(operationData.payer)) || operationData.payer;
 
-      const feeAsset =
-        (await fetchAssetByName(operationData.fee.asset_id)) ||
-        operationData.fee.asset_id;
-      operationData.fee.asset_id = feeAsset.symbol;
-      const asset =
-        (await fetchAssetByName(operationData.amount_to_reserve.asset_id)) ||
-        operationData.amount_to_reserve.asset_id;
-      operationData.amount_to_reserve.asset_id = asset.symbol;
+      operationData.amount_to_reserve.asset_id =
+        operationData.amount_to_reserve.asset_id === "1.3.1"
+          ? "RRC"
+          : operationData.amount_to_reserve.asset_id;
+    }
+
+    if ("registrar" in operationData) {
+      operationData.registrar =
+        (await getPublicKey(operationData.registrar)) ||
+        operationData.registrar;
+
+      operationData.referrer =
+        (await getPublicKey(operationData.referrer)) || operationData.referrer;
     }
 
     // if (operationType == 14)
-    if ("issuer" in operationData) {
-      operationData.issuer =
-        (await getPublicKey(operationData.issuer)) || operationData.issuer;
-      operationData.issue_to_account =
-        (await getPublicKey(operationData.issue_to_account)) ||
-        operationData.issue_to_account;
-    }
+    // if ("issuer" in operationData) {
+    //   operationData.issuer =
+    //     (await getPublicKey(operationData.issuer)) || operationData.issuer;
+
+    //   operationData.issue_to_account =
+    //     (await getPublicKey(operationData.issue_to_account)) ||
+    //     operationData.issue_to_account;
+    // }
     // if (operationType == 0) {
 
     // }
 
     if (operationType == 14) {
-      const feeAsset =
-        (await fetchAssetByName(operationData.fee.asset_id)) ||
-        operationData.fee.asset_id;
-      operationData.fee.asset_id = feeAsset.symbol;
-      const asset =
-        (await fetchAssetByName(operationData.asset_to_issue.asset_id)) ||
-        operationData.asset_to_issue.asset_id;
-      operationData.asset_to_issue.asset_id = asset.symbol;
+      operationData.asset_to_issue.asset_id =
+        operationData.asset_to_issue.asset_id === "1.3.1"
+          ? "RRC"
+          : operationData.asset_to_issue.asset_id;
     }
-
-    // let to = (await getPublicKey(object.op[1].to)) || object.op[1].to;
 
     operation.operationData = operationData;
 
