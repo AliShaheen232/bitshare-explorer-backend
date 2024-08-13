@@ -1,12 +1,13 @@
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
 const { Apis } = require("bitsharesjs-ws");
 const initializeWebSocket = require("../connectNode");
 const connectDB = require("../db");
 const apiHelper = require("../routes/apiHelper");
 const Block = require("../models/Block");
-const fs = require("fs");
-const path = require("path");
 const OperationCount = require("../models/OperationCount");
+const readFile = require("./readFile");
 
 connectDB();
 
@@ -25,11 +26,17 @@ const logInfo = (message) => {
 };
 
 const heighestBlock = async () => {
-  const _heighestBlock = await Block.find().sort({ block_number: -1 }).limit(1);
-  if (_heighestBlock.length > 0) {
-    return _heighestBlock[0].block_number;
+  let _heighestBlock = readFile.readFromFile();
+
+  if (!_heighestBlock) {
+    _heighestBlock = await Block.find().sort({ block_number: -1 }).limit(1);
+    if (_heighestBlock.length > 0) {
+      return _heighestBlock[0].block_number;
+    } else {
+      return 0;
+    }
   }
-  return 0;
+  return _heighestBlock;
 };
 
 const latestBlock = async () => {
@@ -43,14 +50,6 @@ const latestBlock = async () => {
     throw error;
   }
 };
-
-// const lowestBlock = async () => {
-//   const _lowestBlock = await Block.find().sort({ blockNumber: 1 }).limit(1);
-//   if (_lowestBlock.length > 0) {
-//     return _lowestBlock[0].blockNumber;
-//   }
-//   return 0;
-// };
 
 const delay = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -69,6 +68,7 @@ const indexing = async () => {
     for (_heighestBlock; _heighestBlock <= _headBlockNumber; _heighestBlock++) {
       await apiHelper.updateBlockEntry(_heighestBlock);
       console.log(`indexing ~ Updated block: ${_heighestBlock}`);
+      readFile.writeToFile(_heighestBlock);
       // await delay(0);
     }
     logInfo(`Initial loop ends: ${_heighestBlock}`);
