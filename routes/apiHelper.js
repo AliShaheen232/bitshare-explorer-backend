@@ -120,10 +120,13 @@ const updateAccountDetail = async (accountsIden) => {
     .exec("get_accounts", [[accountsIden]]);
 
   for (let i = 0; i < accounts.length; i++) {
+    if (accounts[i] == null) return accounts[i];
     objects.account = {
       account_id: accounts[i].id,
       name: accounts[i].name,
-      public_key: accounts[i].owner.key_auths[0][0],
+      public_key: accounts[i].owner.key_auths[0][0]
+        ? accounts[i].owner.key_auths[0][0]
+        : null,
       balance: balanceObj.balance,
       creation_time: new Date(accounts[i].creation_time),
       data: accounts[i],
@@ -140,6 +143,7 @@ const updateAccountDetail = async (accountsIden) => {
       await newAccount.save();
     }
   }
+
   return accountObject;
 };
 
