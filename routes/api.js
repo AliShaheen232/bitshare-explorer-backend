@@ -35,7 +35,7 @@ router.get("/block/:blockNum", async (req, res) => {
 router.get("/blocks", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 25;
+    const limit = parseInt(req.query.limit) || 5;
 
     const blocks = await apiHelper.getPaginatedBlocks(page, limit);
 
@@ -193,7 +193,7 @@ router.get("/chainID", async (req, res) => {
 router.get("/txs", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 25;
+    const limit = parseInt(req.query.limit) || 5;
     const transactions = await apiHelper.getPaginatedTransactions(page, limit);
 
     res.json(transactions);

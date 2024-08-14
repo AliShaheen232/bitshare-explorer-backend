@@ -120,13 +120,18 @@ const updateAccountDetail = async (accountsIden) => {
     .exec("get_accounts", [[accountsIden]]);
 
   for (let i = 0; i < accounts.length; i++) {
-    if (accounts[i] == null) return accounts[i];
+    console.log("🚀 ~ updateAccountDetail ~ accounts[i]:", accounts[i]);
+    if (accounts[i] == null) return null;
+    let public_key = null;
+    if (accounts[i].owner.key_auths > 0) {
+      public_key = accounts[i].owner.key_auths[0][0];
+    } else {
+      public_key = accounts[i].name;
+    }
     objects.account = {
       account_id: accounts[i].id,
       name: accounts[i].name,
-      public_key: accounts[i].owner.key_auths[0][0]
-        ? accounts[i].owner.key_auths[0][0]
-        : null,
+      public_key,
       balance: balanceObj.balance,
       creation_time: new Date(accounts[i].creation_time),
       data: accounts[i],
@@ -362,6 +367,7 @@ const getPaginatedBlocks = async (page, limit) => {
       transactions: _txObjects,
     };
   }
+
   const pagBlockObject = {
     page,
     count: await Block.countDocuments(),
