@@ -7,5 +7,6 @@ pm2 start ./server.js
 pm2 start ./scripts/index.js
 pm2 start indexer/blockIndexer.js
 pm2 start indexer/transactionIndexer.js
+pm2 start indexer/accountIndexer.js
 
 pm2 logs
