@@ -397,6 +397,22 @@ const getPaginatedTransactions = async (page, limit) => {
   return pagTXObject;
 };
 
+const getPaginatedAccounts = async (page, limit) => {
+  const skip = (page - 1) * limit;
+  const accounts = await Account.find()
+    .sort({ balance: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  const pagAccountObject = {
+    page,
+    count: await Account.countDocuments(),
+    accounts,
+  };
+
+  return pagAccountObject;
+};
+
 const getStat = async () => {
   let operationsCount = await OperationCount.findOne({}).lean();
   if (operationsCount == null) {
@@ -442,20 +458,6 @@ const getStat = async () => {
     operationsCount,
     RRC: readableDetails,
   };
-};
-
-const getPaginatedAccounts = async (page, limit) => {
-  const skip = (page - 1) * limit;
-  const accounts = await Account.find()
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
-  const pagAccountObject = {
-    page,
-    count: await Account.countDocuments(),
-    accounts,
-  };
-  return pagAccountObject;
 };
 
 const getLatestTransactions = async () => {
