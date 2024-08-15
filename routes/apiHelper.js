@@ -120,10 +120,9 @@ const updateAccountDetail = async (accountsIden) => {
     .exec("get_accounts", [[accountsIden]]);
 
   for (let i = 0; i < accounts.length; i++) {
-    console.log("🚀 ~ updateAccountDetail ~ accounts[i]:", accounts[i]);
     if (accounts[i] == null) return null;
     let public_key = null;
-    if (accounts[i].owner.key_auths > 0) {
+    if (accounts[i].owner.key_auths.length > 0) {
       public_key = accounts[i].owner.key_auths[0][0];
     } else {
       public_key = accounts[i].name;

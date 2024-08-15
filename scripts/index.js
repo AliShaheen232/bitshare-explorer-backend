@@ -2,7 +2,7 @@ require("dotenv").config();
 const WebSocket = require("ws");
 const url = require("url");
 const initializeWebSocket = require("../connectNode");
-const txCount = require("./txCount");
+const txCount = require("./perDayTxCount");
 const witnesses = require("./witnessAndVotes");
 
 const port = process.env.SCRIPT_PORT || 5000;
@@ -42,7 +42,7 @@ const runWitnessesScript = async (ws) => {
 
 const runTXCount = async (ws) => {
   setInterval(async () => {
-    ws.send(JSON.stringify({ task: "witnesses", data: await txCount() }));
+    ws.send(JSON.stringify({ task: "perDayTxCount", data: await txCount() }));
   }, 3000);
 };
 
