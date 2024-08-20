@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(
-      "mongodb://localhost:27017/bitshares_explorer"
-    );
+    const conn = await mongoose.connect(process.env.MONGODB_CONNECTION);
     console.log("MongoDB connected");
     return conn;
   } catch (error) {

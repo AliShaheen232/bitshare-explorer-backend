@@ -8,7 +8,7 @@ const OperationCount = require("../models/OperationCount");
 const objects = require("../utils/DTO.json");
 const getOperationType = require("../utils/operationType");
 const computeTxHash = require("../utils/computeTxHash");
-const getAssetBalance = require("../utils/checkBalance");
+const getAssetBalance = require("../utils/updateRRCBalance");
 const { fetchAccountHistory } = require("../utils/accountHistory");
 const getPublicKey = require("../utils/getPublicKey");
 
@@ -111,8 +111,7 @@ const updateTransactionEntry = async (transaction) => {
 };
 
 const updateAccountDetail = async (accountsIden) => {
-  const assetSymbol = "RRC";
-  const balanceObj = await getAssetBalance(accountsIden, assetSymbol);
+  const balanceObj = await getAssetBalance(accountsIden);
 
   let accountObject = [];
   const accounts = await Apis.instance()
@@ -127,6 +126,7 @@ const updateAccountDetail = async (accountsIden) => {
     } else {
       public_key = accounts[i].name;
     }
+
     objects.account = {
       account_id: accounts[i].id,
       name: accounts[i].name,
@@ -255,7 +255,19 @@ const _refineTx = async (txObj) => {
           : operationData.fee.asset_id;
     }
 
+    if ("asset_to_issue" in operationData) {
+      operationData.asset_to_issue.asset_id =
+        operationData.asset_to_issue.asset_id === "1.3.1"
+          ? "RRC"
+          : operationData.asset_to_issue.asset_id;
+    }
+
     if ("from" in operationData) {
+      console.log("🚀 ~ const_refineTx= ~ from):", operationData.from);
+      console.log("🚀 ~ const_refineTx= ~ to):", operationData.to);
+      await getAssetBalance(operationData.from);
+      await getAssetBalance(operationData.to);
+
       operationData.from =
         (await getPublicKey(operationData.from)) || operationData.from;
 
@@ -265,6 +277,9 @@ const _refineTx = async (txObj) => {
 
     // if (operationType == 15)
     if ("payer" in operationData) {
+      await getAssetBalance(operationData.payer);
+      console.log("🚀 ~ const_refineTx= ~ to):", operationData.payer);
+
       operationData.payer =
         (await getPublicKey(operationData.payer)) || operationData.payer;
 
@@ -284,14 +299,19 @@ const _refineTx = async (txObj) => {
     }
 
     // if (operationType == 14)
-    // if ("issuer" in operationData) {
-    //   operationData.issuer =
-    //     (await getPublicKey(operationData.issuer)) || operationData.issuer;
+    if ("issuer" in operationData) {
+      // operationData.issuer =
+      //   (await getPublicKey(operationData.issuer)) || operationData.issuer;
+      // operationData.issue_to_account =
+      //   (await getPublicKey(operationData.issue_to_account)) ||
+      //   operationData.issue_to_account;
 
-    //   operationData.issue_to_account =
-    //     (await getPublicKey(operationData.issue_to_account)) ||
-    //     operationData.issue_to_account;
-    // }
+      await getAssetBalance(operationData.issue_to_account);
+      console.log(
+        "🚀 ~ const_refineTx= ~ to):",
+        operationData.issue_to_account
+      );
+    }
     // if (operationType == 0) {
 
     // }

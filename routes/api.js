@@ -5,7 +5,7 @@ const apiHelper = require("./apiHelper");
 const AccountCount = require("../models/AccountCount");
 const Transaction = require("../models/Transaction");
 const { fetchAccountHistory } = require("../utils/accountHistory");
-const getAssetBalance = require("../utils/checkBalance");
+const getAssetBalance = require("../utils/updateRRCBalance");
 const opObj = require("../utils/fetchOpObj");
 
 const router = express.Router();
