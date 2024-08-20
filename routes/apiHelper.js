@@ -263,8 +263,6 @@ const _refineTx = async (txObj) => {
     }
 
     if ("from" in operationData) {
-      console.log("🚀 ~ const_refineTx= ~ from):", operationData.from);
-      console.log("🚀 ~ const_refineTx= ~ to):", operationData.to);
       await getAssetBalance(operationData.from);
       await getAssetBalance(operationData.to);
 
@@ -278,7 +276,6 @@ const _refineTx = async (txObj) => {
     // if (operationType == 15)
     if ("payer" in operationData) {
       await getAssetBalance(operationData.payer);
-      console.log("🚀 ~ const_refineTx= ~ to):", operationData.payer);
 
       operationData.payer =
         (await getPublicKey(operationData.payer)) || operationData.payer;
