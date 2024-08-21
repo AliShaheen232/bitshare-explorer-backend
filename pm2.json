@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "accountIndexer",
+      "script": "./indexer/accountIndexer.js",
+      "autorestart": false,
+      "watch": false
+    }
+  ]
+}

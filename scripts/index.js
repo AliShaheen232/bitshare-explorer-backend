@@ -4,6 +4,7 @@ const url = require("url");
 const initializeWebSocket = require("../connectNode");
 const txCount = require("./perDayTxCount");
 const witnesses = require("./witnessAndVotes");
+const topHolders = require("./topHolders");
 
 const port = process.env.SCRIPT_PORT || 5000;
 const wss = new WebSocket.Server({ port });
@@ -11,8 +12,6 @@ const wss = new WebSocket.Server({ port });
 wss.on("connection", async (ws, req) => {
   let pathName = url.parse(req.url);
   pathName = pathName.path;
-  console.log("🚀 ~ wss.on ~ pathName:", pathName);
-  await initializeWebSocket();
 
   console.log("Client connected");
 
@@ -22,6 +21,8 @@ wss.on("connection", async (ws, req) => {
       break;
     case "/txCount":
       runTXCount(ws);
+    case "/topHolders":
+      runTopHolders(ws);
       break;
 
     default:
@@ -35,6 +36,8 @@ wss.on("connection", async (ws, req) => {
 });
 
 const runWitnessesScript = async (ws) => {
+  await initializeWebSocket();
+
   setInterval(async () => {
     ws.send(JSON.stringify({ task: "witnesses", data: await witnesses() }));
   }, 3000);
@@ -43,6 +46,14 @@ const runWitnessesScript = async (ws) => {
 const runTXCount = async (ws) => {
   setInterval(async () => {
     ws.send(JSON.stringify({ task: "perDayTxCount", data: await txCount() }));
+  }, 3000);
+};
+
+const runTopHolders = async (ws) => {
+  setInterval(async () => {
+    ws.send(
+      JSON.stringify({ task: "topRRCHolders", data: await topHolders() })
+    );
   }, 3000);
 };
 
