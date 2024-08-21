@@ -2,7 +2,6 @@ const { Apis } = require("bitsharesjs-ws");
 const Account = require("../models/Account");
 
 async function updateRRCBalance(accountId) {
-  console.log("🚀 ~ updateRRCBalance ~ accountId:", accountId);
   try {
     if (/^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(accountId)) {
       // if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(accountsIden)) {

@@ -261,11 +261,6 @@ const _refineTx = async (txObj) => {
     }
 
     if ("from" in operationData) {
-      console.log(
-        "🚀 ~ const_refineTx= ~ operationData.from:",
-        operationData.from
-      );
-      console.log("🚀 ~ const_refineTx= ~ operationData.to:", operationData.to);
       await getAssetBalance(operationData.from);
       await getAssetBalance(operationData.to);
 
@@ -278,10 +273,6 @@ const _refineTx = async (txObj) => {
 
     // if (operationType == 15)
     if ("payer" in operationData) {
-      console.log(
-        "🚀 ~ const_refineTx= ~ operationData.payer:",
-        operationData.payer
-      );
       await getAssetBalance(operationData.payer);
 
       operationData.payer =
@@ -309,10 +300,6 @@ const _refineTx = async (txObj) => {
       // operationData.issue_to_account =
       //   (await getPublicKey(operationData.issue_to_account)) ||
       //   operationData.issue_to_account;
-      console.log(
-        "🚀 ~ const_refineTx= ~ operationData.issue_to_account:",
-        operationData.issue_to_account
-      );
 
       await getAssetBalance(operationData.issue_to_account);
     }
