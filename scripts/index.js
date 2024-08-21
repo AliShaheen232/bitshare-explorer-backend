@@ -21,6 +21,7 @@ wss.on("connection", async (ws, req) => {
       break;
     case "/txCount":
       runTXCount(ws);
+      break;
     case "/topHolders":
       runTopHolders(ws);
       break;
