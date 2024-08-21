@@ -20,49 +20,71 @@ const getObjectDetails = async (objectId) => {
 };
 
 const parseObjectDetails = async (object) => {
+  let operation_type = object.op[0];
+  let operation_data = object.op[1];
   if (!object) {
     console.log("Object not found.");
     return;
   }
-  object.op[1].fee.asset_id =
-    (await apiHelper.fetchAssetByName(object.op[1].fee.asset_id)).symbol ||
-    object.op[1].fee.asset_id;
 
-  let from = (await getPublicKey(object.op[1].from)) || object.op[1].from;
-  let to = (await getPublicKey(object.op[1].to)) || object.op[1].to;
+  if ("fee" in operation_data) {
+    operation_data.fee.asset_id =
+      operation_data.fee.asset_id === "1.3.0"
+        ? "BTS"
+        : operation_data.fee.asset_id;
+  }
+
+  if ("amount" in operation_data) {
+    operation_data.amount.asset_id =
+      operation_data.amount.asset_id === "1.3.0"
+        ? "BTS"
+        : operation_data.amount.asset_id;
+  }
+
+  if ("asset_to_issue" in operation_data) {
+    operation_data.asset_to_issue.asset_id =
+      operation_data.asset_to_issue.asset_id === "1.3.1"
+        ? "RRC"
+        : operation_data.asset_to_issue.asset_id;
+  }
+
+  if ("amount_to_reserve" in operation_data) {
+    operation_data.amount_to_reserve.asset_id =
+      operation_data.amount_to_reserve.asset_id === "1.3.1"
+        ? "RRC"
+        : operation_data.amount_to_reserve.asset_id;
+  }
+
+  if ("issuer" in operation_data) {
+    operation_data.issuer =
+      (await getPublicKey(operation_data.issuer)) || operation_data.issuer;
+    operation_data.issue_to_account =
+      (await getPublicKey(operation_data.issue_to_account)) ||
+      operation_data.issue_to_account;
+  }
+
+  if ("from" in operation_data) {
+    operation_data.from =
+      (await getPublicKey(operation_data.from)) || operation_data.from;
+    operation_data.to =
+      (await getPublicKey(operation_data.to)) || operation_data.to;
+  }
+
+  if ("payer" in operation_data) {
+    operation_data.payer =
+      (await getPublicKey(operation_data.payer)) || operation_data.payer;
+  }
 
   const obj = {
-    amount: object.op[1].amount,
-    fee: object.op[1].fee,
-    amount_to_reserve: object.op[1].amount_to_reserve,
-    memo: object.op[1].memo,
+    operation_data,
     block_num: object.block_num,
     block_time: object.block_time,
   };
 
-  if (object.op[0] == 15) {
-    object.op[1].amount_to_reserve.asset_id =
-      (
-        await apiHelper.fetchAssetByName(
-          object.op[1].amount_to_reserve.asset_id
-        )
-      ).symbol || object.op[1].amount_to_reserve.asset_id;
-
-    let payer = object.op[1].payer;
-    payer = await getPublicKey(payer);
-
-    return { operation_type: object.op[0], id: object.id, payer, ...obj };
-  } else {
-    object.op[1].amount.asset_id =
-      (await apiHelper.fetchAssetByName(object.op[1].amount.asset_id)).symbol ||
-      object.op[1].amount.asset_id;
-    return {
-      operation_type: object.op[0],
-      id: object.id,
-      from,
-      to,
-      ...obj,
-    };
-  }
+  return {
+    id: object.id,
+    operation_type,
+    ...obj,
+  };
 };
 module.exports = { getObjectDetails, parseObjectDetails };
