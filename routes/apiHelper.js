@@ -191,8 +191,6 @@ const _updateOperationType = async (type) => {
 const refineTx = (txObj) => {
   let timestamp = txObj.timestamp;
   if (!(timestamp instanceof Date)) {
-    console.log("🚀 ~ timestamp: 183", timestamp);
-
     timestamp = new Date(timestamp);
   }
 
@@ -263,6 +261,11 @@ const _refineTx = async (txObj) => {
     }
 
     if ("from" in operationData) {
+      console.log(
+        "🚀 ~ const_refineTx= ~ operationData.from:",
+        operationData.from
+      );
+      console.log("🚀 ~ const_refineTx= ~ operationData.to:", operationData.to);
       await getAssetBalance(operationData.from);
       await getAssetBalance(operationData.to);
 
@@ -275,6 +278,10 @@ const _refineTx = async (txObj) => {
 
     // if (operationType == 15)
     if ("payer" in operationData) {
+      console.log(
+        "🚀 ~ const_refineTx= ~ operationData.payer:",
+        operationData.payer
+      );
       await getAssetBalance(operationData.payer);
 
       operationData.payer =
@@ -302,12 +309,12 @@ const _refineTx = async (txObj) => {
       // operationData.issue_to_account =
       //   (await getPublicKey(operationData.issue_to_account)) ||
       //   operationData.issue_to_account;
-
-      await getAssetBalance(operationData.issue_to_account);
       console.log(
-        "🚀 ~ const_refineTx= ~ to):",
+        "🚀 ~ const_refineTx= ~ operationData.issue_to_account:",
         operationData.issue_to_account
       );
+
+      await getAssetBalance(operationData.issue_to_account);
     }
     // if (operationType == 0) {
 

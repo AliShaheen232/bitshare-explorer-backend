@@ -2,16 +2,8 @@ const { Apis } = require("bitsharesjs-ws");
 const Account = require("../models/Account");
 
 async function updateRRCBalance(accountId) {
+  console.log("🚀 ~ updateRRCBalance ~ accountId:", accountId);
   try {
-    // const asset = (
-    //   await Apis.instance()
-    //     .db_api()
-    //     .exec("lookup_asset_symbols", [[assetSymbol]])
-    // )[0];
-
-    // if (!asset) {
-    //   throw new Error(`Asset ${assetSymbol} not found`);
-    // }
     const assetPrecision = 6;
     const assetSymbol = "RRC";
     const assetId = "1.3.1"; // asset.id
