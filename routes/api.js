@@ -333,7 +333,7 @@ const searchInput = async (input) => {
 
   if (/^1\.11\.\d+$/.test(input)) {
     const tx = await opObj.getObjectDetails(input);
-    return { type: "transaction", data: tx };
+    return { type: "transaction_object", data: tx };
   }
 
   return null;
