@@ -18,7 +18,6 @@ async function updateRRCBalance(accountId) {
     const balances = await Apis.instance()
       .db_api()
       .exec("get_account_balances", [accountId, [assetId]]);
-    console.log("balances:", balances);
 
     if (balances.length === 0) {
       return { asset: assetSymbol, balance: 0 };
@@ -32,7 +31,6 @@ async function updateRRCBalance(accountId) {
     if (existingAccount) {
       existingAccount.balance = balance;
     } else {
-      console.log("creating account");
       await _updateAccountDetail(accountId, balance);
     }
 

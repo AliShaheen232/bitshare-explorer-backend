@@ -111,6 +111,7 @@ const updateTransactionEntry = async (transaction) => {
 };
 
 const updateAccountDetail = async (accountsIden) => {
+  const balanceObj = await getAssetBalance(accountsIden);
   let accountObject = [];
   const accounts = await Apis.instance()
     .db_api()
@@ -239,8 +240,6 @@ const _refineTx = async (txObj) => {
       operationData.amount.amount = formatAmount(
         Number(operationData.amount.amount)
       );
-      // operationData.amount.amount =
-      //   operationData.amount.amount / Math.pow(10, assetPrecision);
 
       operation.amount = operationData.amount;
       delete operationData.amount;
@@ -263,6 +262,12 @@ const _refineTx = async (txObj) => {
         operationData.asset_to_issue.asset_id === "1.3.1"
           ? "RRC"
           : operationData.asset_to_issue.asset_id;
+
+      await getAssetBalance(operationData.issue_to_account);
+
+      operationData.asset_to_issue.amount = formatAmount(
+        Number(operationData.asset_to_issue.amount)
+      );
     }
 
     if ("from" in operationData) {
@@ -293,30 +298,14 @@ const _refineTx = async (txObj) => {
       );
     }
 
-    if ("registrar" in operationData) {
-      operationData.registrar =
-        (await getPublicKey(operationData.registrar)) ||
-        operationData.registrar;
+    // if ("registrar" in operationData) {
+    //   operationData.registrar =
+    //     (await getPublicKey(operationData.registrar)) ||
+    //     operationData.registrar;
 
-      operationData.referrer =
-        (await getPublicKey(operationData.referrer)) || operationData.referrer;
-    }
-
-    // if (operationType == 14)
-    if ("issuer" in operationData) {
-      await getAssetBalance(operationData.issue_to_account);
-
-      operationData.asset_to_issue.amount = formatAmount(
-        Number(operationData.asset_to_issue.amount)
-      );
-    }
-
-    if (operationType == 14) {
-      operationData.asset_to_issue.asset_id =
-        operationData.asset_to_issue.asset_id === "1.3.1"
-          ? "RRC"
-          : operationData.asset_to_issue.asset_id;
-    }
+    //   operationData.referrer =
+    //     (await getPublicKey(operationData.referrer)) || operationData.referrer;
+    // }
 
     operation.operationData = operationData;
 
