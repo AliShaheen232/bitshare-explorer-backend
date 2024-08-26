@@ -1,6 +1,7 @@
 const { Apis } = require("bitsharesjs-ws");
 const initializeWebSocket = require("../connectNode");
 const apiHelper = require("../routes/apiHelper");
+const getAssetBalance = require("../utils/updateRRCBalance");
 const Account = require("../models/Account");
 
 async function connect() {
@@ -27,7 +28,11 @@ async function getAllAccountNames() {
           const existingAccount = await Account.findOne({
             account_id: accID,
           });
-          if (!existingAccount) await apiHelper.updateAccountDetail(accID);
+          if (!existingAccount) {
+            await apiHelper.updateAccountDetail(accID);
+          } else {
+            await getAssetBalance(accID);
+          }
 
           console.log(
             `${accNum}: ${JSON.stringify(accounts[accNum])} updated in DB, `
