@@ -1,5 +1,6 @@
 const { Apis } = require("bitsharesjs-ws");
 const Account = require("../models/Account");
+const objects = require("./DTO.json");
 
 async function updateRRCBalance(accountId) {
   try {
@@ -12,11 +13,12 @@ async function updateRRCBalance(accountId) {
     }
     const assetPrecision = 6;
     const assetSymbol = "RRC";
-    const assetId = "1.3.1"; // asset.id
+    const assetId = "1.3.1";
 
     const balances = await Apis.instance()
       .db_api()
       .exec("get_account_balances", [accountId, [assetId]]);
+    console.log("balances:", balances);
 
     if (balances.length === 0) {
       return { asset: assetSymbol, balance: 0 };
@@ -29,6 +31,9 @@ async function updateRRCBalance(accountId) {
 
     if (existingAccount) {
       existingAccount.balance = balance;
+    } else {
+      console.log("creating account");
+      await _updateAccountDetail(accountId, balance);
     }
 
     const balanceObj = {
@@ -41,5 +46,36 @@ async function updateRRCBalance(accountId) {
     throw error;
   }
 }
+
+const _updateAccountDetail = async (accountsIden, balance) => {
+  let accountObject = [];
+  const accounts = await Apis.instance()
+    .db_api()
+    .exec("get_accounts", [[accountsIden]]);
+
+  for (let i = 0; i < accounts.length; i++) {
+    if (accounts[i] == null) return null;
+    let public_key = null;
+    if (accounts[i].owner.key_auths.length > 0) {
+      public_key = accounts[i].owner.key_auths[0][0];
+    } else {
+      public_key = accounts[i].name;
+    }
+
+    objects.account = {
+      account_id: accounts[i].id,
+      name: accounts[i].name,
+      public_key,
+      balance,
+      creation_time: new Date(accounts[i].creation_time),
+      data: accounts[i],
+    };
+
+    accountObject.push(objects.account);
+
+    const newAccount = new Account(objects.account);
+    await newAccount.save();
+  }
+};
 
 module.exports = updateRRCBalance;

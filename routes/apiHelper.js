@@ -111,8 +111,6 @@ const updateTransactionEntry = async (transaction) => {
 };
 
 const updateAccountDetail = async (accountsIden) => {
-  const balanceObj = await getAssetBalance(accountsIden);
-
   let accountObject = [];
   const accounts = await Apis.instance()
     .db_api()
@@ -293,9 +291,6 @@ const _refineTx = async (txObj) => {
       operationData.amount_to_reserve.amount = formatAmount(
         Number(operationData.amount_to_reserve.amount)
       );
-
-      // operationData.amount_to_reserve.amount =
-      //   operationData.amount_to_reserve.amount / Math.pow(10, assetPrecision);
     }
 
     if ("registrar" in operationData) {
@@ -315,9 +310,6 @@ const _refineTx = async (txObj) => {
         Number(operationData.asset_to_issue.amount)
       );
     }
-    // if (operationType == 0) {
-
-    // }
 
     if (operationType == 14) {
       operationData.asset_to_issue.asset_id =
