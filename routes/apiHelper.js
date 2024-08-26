@@ -210,6 +210,7 @@ const refineTx = (txObj) => {
 
 const _refineTx = async (txObj) => {
   let timestamp = txObj.timestamp;
+  const assetPrecision = 6;
 
   if (timestamp === undefined) {
     timestamp = new Date();
@@ -300,8 +301,9 @@ const _refineTx = async (txObj) => {
       // operationData.issue_to_account =
       //   (await getPublicKey(operationData.issue_to_account)) ||
       //   operationData.issue_to_account;
-
       await getAssetBalance(operationData.issue_to_account);
+      operationData.asset_to_issue.amount =
+        operationData.asset_to_issue.amount / Math.pow(10, assetPrecision);
     }
     // if (operationType == 0) {
 
