@@ -222,7 +222,6 @@ const _refineTx = async (txObj) => {
     const operationData =
       txObj.operations[i].operationData || txObj.operations[i][1];
 
-    // Check for undefined specifically
     const operationType =
       txObj.operations[i].operationType !== undefined
         ? txObj.operations[i].operationType
@@ -235,9 +234,16 @@ const _refineTx = async (txObj) => {
 
     if ("amount" in operationData) {
       operationData.amount.asset_id =
-        operationData.amount.asset_id === "1.3.0"
-          ? "BTS"
+        operationData.amount.asset_id === "1.3.1"
+          ? "RRC"
           : operationData.amount.asset_id;
+
+      operationData.amount.amount = formatAmount(
+        Number(operationData.amount.amount)
+      );
+      // operationData.amount.amount =
+      //   operationData.amount.amount / Math.pow(10, assetPrecision);
+
       operation.amount = operationData.amount;
       delete operationData.amount;
     }
@@ -283,6 +289,13 @@ const _refineTx = async (txObj) => {
         operationData.amount_to_reserve.asset_id === "1.3.1"
           ? "RRC"
           : operationData.amount_to_reserve.asset_id;
+
+      operationData.amount_to_reserve.amount = formatAmount(
+        Number(operationData.amount_to_reserve.amount)
+      );
+
+      // operationData.amount_to_reserve.amount =
+      //   operationData.amount_to_reserve.amount / Math.pow(10, assetPrecision);
     }
 
     if ("registrar" in operationData) {
@@ -296,14 +309,11 @@ const _refineTx = async (txObj) => {
 
     // if (operationType == 14)
     if ("issuer" in operationData) {
-      // operationData.issuer =
-      //   (await getPublicKey(operationData.issuer)) || operationData.issuer;
-      // operationData.issue_to_account =
-      //   (await getPublicKey(operationData.issue_to_account)) ||
-      //   operationData.issue_to_account;
       await getAssetBalance(operationData.issue_to_account);
-      operationData.asset_to_issue.amount =
-        operationData.asset_to_issue.amount / Math.pow(10, assetPrecision);
+
+      operationData.asset_to_issue.amount = formatAmount(
+        Number(operationData.asset_to_issue.amount)
+      );
     }
     // if (operationType == 0) {
 
@@ -538,6 +548,20 @@ const fetchAssetHolders = async () => {
     console.error(`Error fetching asset holders: ${error.message}`);
     throw error;
   }
+};
+
+const formatAmount = (amount) => {
+  const assetPrecision = 6;
+
+  amount = amount / Math.pow(10, assetPrecision);
+
+  let amountStr = amount.toString();
+
+  if (amountStr.includes("e")) {
+    amountStr = amount.toFixed(20).replace(/\.?0+$/, "");
+  }
+
+  return parseFloat(amountStr);
 };
 
 module.exports = {
