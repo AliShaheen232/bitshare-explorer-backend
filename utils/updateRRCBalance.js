@@ -46,7 +46,6 @@ async function updateRRCBalance(accountId) {
 }
 
 const _updateAccountDetail = async (accountsIden, balance) => {
-  let accountObject = [];
   const accounts = await Apis.instance()
     .db_api()
     .exec("get_accounts", [[accountsIden]]);
@@ -68,8 +67,6 @@ const _updateAccountDetail = async (accountsIden, balance) => {
       creation_time: new Date(accounts[i].creation_time),
       data: accounts[i],
     };
-
-    accountObject.push(objects.account);
 
     const newAccount = new Account(objects.account);
     await newAccount.save();

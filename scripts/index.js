@@ -5,6 +5,7 @@ const initializeWebSocket = require("../connectNode");
 const txCount = require("./perDayTxCount");
 const witnesses = require("./witnessAndVotes");
 const topHolders = require("./topHolders");
+const blockTxsGraph = require("./blockTxsGraph");
 
 const port = process.env.SCRIPT_PORT || 5000;
 const wss = new WebSocket.Server({ port });
@@ -24,6 +25,9 @@ wss.on("connection", async (ws, req) => {
       break;
     case "/topHolders":
       runTopHolders(ws);
+      break;
+    case "/blocksData":
+      runBlockTxs(ws);
       break;
 
     default:
@@ -54,6 +58,14 @@ const runTopHolders = async (ws) => {
   setInterval(async () => {
     ws.send(
       JSON.stringify({ task: "topRRCHolders", data: await topHolders() })
+    );
+  }, 3000);
+};
+
+const runBlockTxs = async (ws) => {
+  setInterval(async () => {
+    ws.send(
+      JSON.stringify({ task: "latestBlocksData", data: await blockTxsGraph() })
     );
   }, 3000);
 };

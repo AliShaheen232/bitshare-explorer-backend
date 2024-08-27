@@ -11,6 +11,7 @@ const computeTxHash = require("../utils/computeTxHash");
 const getAssetBalance = require("../utils/updateRRCBalance");
 const { fetchAccountHistory } = require("../utils/accountHistory");
 const getPublicKey = require("../utils/getPublicKey");
+const accountController = require("./accountController");
 
 connectDB();
 
@@ -99,7 +100,7 @@ const updateTransactionEntry = async (transaction) => {
     if (operationType == 5) {
       console.log(`93 ${operationName}`, operationData);
 
-      await updateAccountDetail(operationData.name);
+      await accountController.updateAccountDetail(operationData.name);
     }
   });
 
@@ -110,63 +111,63 @@ const updateTransactionEntry = async (transaction) => {
   return _txObject;
 };
 
-const updateAccountDetail = async (accountsIden) => {
-  const balanceObj = await getAssetBalance(accountsIden);
-  let accountObject = [];
-  const accounts = await Apis.instance()
-    .db_api()
-    .exec("get_accounts", [[accountsIden]]);
+// const updateAccountDetail = async (accountsIden) => {
+//   const balanceObj = await getAssetBalance(accountsIden);
+//   let accountObject = [];
+//   const accounts = await Apis.instance()
+//     .db_api()
+//     .exec("get_accounts", [[accountsIden]]);
 
-  for (let i = 0; i < accounts.length; i++) {
-    if (accounts[i] == null) return null;
-    let public_key = null;
-    if (accounts[i].owner.key_auths.length > 0) {
-      public_key = accounts[i].owner.key_auths[0][0];
-    } else {
-      public_key = accounts[i].name;
-    }
+//   for (let i = 0; i < accounts.length; i++) {
+//     if (accounts[i] == null) return null;
+//     let public_key = null;
+//     if (accounts[i].owner.key_auths.length > 0) {
+//       public_key = accounts[i].owner.key_auths[0][0];
+//     } else {
+//       public_key = accounts[i].name;
+//     }
 
-    objects.account = {
-      account_id: accounts[i].id,
-      name: accounts[i].name,
-      public_key,
-      balance: balanceObj.balance,
-      creation_time: new Date(accounts[i].creation_time),
-      data: accounts[i],
-    };
+//     objects.account = {
+//       account_id: accounts[i].id,
+//       name: accounts[i].name,
+//       public_key,
+//       balance: balanceObj.balance,
+//       creation_time: new Date(accounts[i].creation_time),
+//       data: accounts[i],
+//     };
 
-    accountObject.push(objects.account);
+//     accountObject.push(objects.account);
 
-    const existingAccount = await Account.findOne({
-      account_id: objects.account.account_id,
-    });
+//     const existingAccount = await Account.findOne({
+//       account_id: objects.account.account_id,
+//     });
 
-    if (!existingAccount) {
-      const newAccount = new Account(objects.account);
-      await newAccount.save();
-    }
-  }
+//     if (!existingAccount) {
+//       const newAccount = new Account(objects.account);
+//       await newAccount.save();
+//     }
+//   }
 
-  return accountObject;
-};
+//   return accountObject;
+// };
 
-const updateAccountEntry = async (accountsIden, limit) => {
-  if (/^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(accountsIden)) {
-    // if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(accountsIden)) {
-    let keyRef = await Apis.instance()
-      .db_api()
-      .exec("get_key_references", [[accountsIden]]);
-    accountsIden = keyRef[0][0];
-  }
+// const updateAccountEntry = async (accountsIden, limit) => {
+//   if (/^(BTS|RRC)[0-9A-Za-z]{50,55}$/.test(accountsIden)) {
+//     // if (/^[1-9A-HJ-NP-Za-km-z1-9]{1,55}$/.test(accountsIden)) {
+//     let keyRef = await Apis.instance()
+//       .db_api()
+//       .exec("get_key_references", [[accountsIden]]);
+//     accountsIden = keyRef[0][0];
+//   }
 
-  let accountObject = await updateAccountDetail(accountsIden);
-  const historyObj = await fetchAccountHistory(accountsIden, limit);
+//   let accountObject = await updateAccountDetail(accountsIden);
+//   const historyObj = await fetchAccountHistory(accountsIden, limit);
 
-  return {
-    account: accountObject[0],
-    history: historyObj.history,
-  };
-};
+//   return {
+//     account: accountObject[0],
+//     history: historyObj.history,
+//   };
+// };
 
 const updateOperationType = async (type) => {
   let existingDoc = await OperationCount.findOne({});
@@ -401,21 +402,21 @@ const getPaginatedTransactions = async (page, limit) => {
   return pagTXObject;
 };
 
-const getPaginatedAccounts = async (page, limit) => {
-  const skip = (page - 1) * limit;
-  const accounts = await Account.find()
-    .sort({ balance: -1 })
-    .skip(skip)
-    .limit(limit);
+// const getPaginatedAccounts = async (page, limit) => {
+//   const skip = (page - 1) * limit;
+//   const accounts = await Account.find()
+//     .sort({ balance: -1 })
+//     .skip(skip)
+//     .limit(limit);
 
-  const pagAccountObject = {
-    page,
-    count: await Account.countDocuments(),
-    accounts,
-  };
+//   const pagAccountObject = {
+//     page,
+//     count: await Account.countDocuments(),
+//     accounts,
+//   };
 
-  return pagAccountObject;
-};
+//   return pagAccountObject;
+// };
 
 const getStat = async () => {
   let operationsCount = await OperationCount.findOne({}).lean();
@@ -548,11 +549,11 @@ const formatAmount = (amount) => {
 module.exports = {
   updateBlockEntry,
   updateTransactionEntry,
-  updateAccountEntry,
-  updateAccountDetail,
+  // updateAccountEntry,
+  // updateAccountDetail,
+  // getPaginatedAccounts,
   getPaginatedBlocks,
   getPaginatedTransactions,
-  getPaginatedAccounts,
   getLatestTransactions,
   getTotalAssets,
   getStat,

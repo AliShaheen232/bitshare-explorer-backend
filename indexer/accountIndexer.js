@@ -3,6 +3,7 @@ const initializeWebSocket = require("../connectNode");
 const apiHelper = require("../routes/apiHelper");
 const getAssetBalance = require("../utils/updateRRCBalance");
 const Account = require("../models/Account");
+const accountController = require("../routes/accountController");
 
 async function connect() {
   await initializeWebSocket();
@@ -29,7 +30,7 @@ async function getAllAccountNames() {
             account_id: accID,
           });
           if (!existingAccount) {
-            await apiHelper.updateAccountDetail(accID);
+            await accountController.updateAccountDetail(accID);
           } else {
             await getAssetBalance(accID);
           }
@@ -45,11 +46,10 @@ async function getAllAccountNames() {
   return accountNames;
 }
 
-// Main function to run the script
 (async () => {
   try {
     await connect();
-    const accountNames = await getAllAccountNames();
+    await getAllAccountNames();
   } catch (error) {
     console.error("Error:", error);
   }

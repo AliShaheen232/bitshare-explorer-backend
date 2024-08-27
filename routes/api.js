@@ -7,6 +7,7 @@ const Transaction = require("../models/Transaction");
 const { fetchAccountHistory } = require("../utils/accountHistory");
 const getAssetBalance = require("../utils/updateRRCBalance");
 const opObj = require("../utils/fetchOpObj");
+const accountController = require("./accountController");
 
 const router = express.Router();
 
@@ -126,7 +127,7 @@ router.get("/accounts", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 25;
 
-    const accounts = await apiHelper.getPaginatedAccounts(page, limit);
+    const accounts = await accountController.getPaginatedAccounts(page, limit);
 
     res.json(accounts);
   } catch (error) {
@@ -363,7 +364,7 @@ const _updateTransactionEntry = async (transactionHash) => {
 };
 
 const _updateAccountEntry = async (account, limit) => {
-  return await apiHelper.updateAccountEntry(account, limit);
+  return await accountController.updateAccountEntry(account, limit);
 };
 
 module.exports = router;

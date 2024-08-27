@@ -6,7 +6,7 @@ connectDB();
 const fetchAssetHolders = async () => {
   try {
     let topHolders = [];
-    const holders = await Account.find().sort({ balance: -1 }).limit(20).lean();
+    const holders = await Account.find().sort({ balance: -1 }).limit(20);
     holders.map((holder) => {
       topHolders.push({
         account_id: holder.account_id,
