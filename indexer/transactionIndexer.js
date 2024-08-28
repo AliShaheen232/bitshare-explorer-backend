@@ -1,7 +1,7 @@
 const { Apis } = require("bitsharesjs-ws");
 const initializeWebSocket = require("../connectNode");
 const connectDB = require("../db");
-const apiHelper = require("../routes/apiHelper");
+const transactionController = require("../routes/transactionController");
 const fs = require("fs");
 const path = require("path");
 
@@ -57,7 +57,7 @@ const getLatestTransactions = async (block_number) => {
         timestamp: new Date(block.timestamp),
         ...block.transactions[i],
       };
-      tx = await apiHelper.updateTransactionEntry(tx);
+      tx = await transactionController.updateTransactionEntry(tx);
       txs.push(tx);
     }
   }

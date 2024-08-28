@@ -8,6 +8,7 @@ const { fetchAccountHistory } = require("../utils/accountHistory");
 const getAssetBalance = require("../utils/updateRRCBalance");
 const opObj = require("../utils/fetchOpObj");
 const accountController = require("./accountController");
+const transactionController = require("./transactionController");
 
 const router = express.Router();
 
@@ -50,21 +51,6 @@ router.get("/blocks", async (req, res) => {
 router.get("/txs/:blockNum", async (req, res) => {
   try {
     const blockNumber = req.params.blockNum;
-
-    // let block = await Apis.instance().db_api().exec("get_block", [blockNumber]);
-
-    // if (block == null) return res.json(null);
-
-    // let transactions = [];
-    // for (let i = 0; i < block.transactions.length; i++) {
-
-    //   const transaction = await _updateTransactionEntry({
-    //     blockNumber,
-    //     ...block.transactions[i],
-    //   });
-
-    //   transactions.push(transaction);
-    // }
 
     const block = await _updateBlockEntry(blockNumber);
     const txs = block.transactions;
@@ -195,7 +181,7 @@ router.get("/txs", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    const transactions = await apiHelper.getPaginatedTransactions(page, limit);
+    const transactions = await transactionController.getPaginatedTransactions(page, limit);
 
     res.json(transactions);
   } catch (error) {
@@ -216,7 +202,7 @@ router.get("/tx/:transaction", async (req, res) => {
 
 router.get("/latestTxs", async (req, res) => {
   try {
-    const transactions = await apiHelper.getLatestTransactions();
+    const transactions = await transactionController.getLatestTransactions();
     res.json(transactions);
   } catch (error) {
     res.status(500).send(error.message);
@@ -351,13 +337,17 @@ const _updateTransactionEntry = async (transactionHash) => {
   });
 
   if (existingTransaction) {
-    transaction = await apiHelper.updateTransactionEntry(existingTransaction);
+    transaction = await transactionController.updateTransactionEntry(
+      existingTransaction
+    );
   } else {
     const transaction = await Apis.instance()
       .db_api()
       .exec("get_recent_transaction_by_id", [transactionHash]);
     if (transaction == null) return null;
-    transaction = await apiHelper.updateTransactionEntry(transaction);
+    transaction = await transactionController.updateTransactionEntry(
+      transaction
+    );
   }
 
   return transaction;

@@ -20,6 +20,7 @@ const getObjectDetails = async (objectId) => {
 };
 
 const parseObjectDetails = async (object) => {
+  const assetPrecision = 6;
   let operation_type = object.op[0];
   let operation_data = object.op[1];
   if (!object) {
@@ -36,9 +37,11 @@ const parseObjectDetails = async (object) => {
 
   if ("amount" in operation_data) {
     operation_data.amount.asset_id =
-      operation_data.amount.asset_id === "1.3.0"
-        ? "BTS"
+      operation_data.amount.asset_id === "1.3.1"
+        ? "RRC"
         : operation_data.amount.asset_id;
+    operation_data.amount.amount =
+      operation_data.amount.amount / Math.pow(10, assetPrecision);
   }
 
   if ("asset_to_issue" in operation_data) {
