@@ -1,7 +1,7 @@
 const Account = require("../models/Account");
 const connectDB = require("../db");
 
-connectDB();
+// connectDB();
 
 const fetchAssetHolders = async () => {
   try {

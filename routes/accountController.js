@@ -6,7 +6,7 @@ const getAssetBalance = require("../utils/updateRRCBalance");
 const objects = require("../utils/DTO.json");
 const { fetchAccountHistory } = require("../utils/accountHistory");
 
-connectDB();
+// connectDB();
 
 const getPaginatedAccounts = async (page, limit) => {
   const skip = (page - 1) * limit;

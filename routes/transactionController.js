@@ -13,7 +13,7 @@ const accountController = require("./accountController");
 // const initializeWebSocket = require("../connectNode");
 // const { fetchAccountHistory } = require("../utils/accountHistory");
 
-connectDB();
+// connectDB();
 
 const updateTransactionEntry = async (transaction) => {
   let transaction_hash = "";

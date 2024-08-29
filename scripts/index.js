@@ -6,6 +6,9 @@ const txCount = require("./perDayTxCount");
 const witnesses = require("./witnessAndVotes");
 const topHolders = require("./topHolders");
 const blockTxsGraph = require("./blockTxsGraph");
+const connectDB = require("../db");
+
+connectDB();
 
 const port = process.env.SCRIPT_PORT || 5000;
 const wss = new WebSocket.Server({ port });

@@ -1,7 +1,7 @@
 const Block = require("../models/Block");
 const connectDB = require("../db");
 
-connectDB();
+// connectDB();
 
 const blockTxsGraph = async () => {
   try {

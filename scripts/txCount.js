@@ -2,7 +2,7 @@ const Transaction = require("../models/Transaction");
 const connectDB = require("../db");
 const objects = require("../utils/DTO.json");
 
-connectDB();
+// connectDB();
 
 const getTransactionCounts = async (diff) => {
   let endDate = new Date();

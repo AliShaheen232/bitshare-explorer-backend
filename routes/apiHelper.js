@@ -14,7 +14,7 @@ const transactionController = require("./transactionController");
 // const getPublicKey = require("../utils/getPublicKey");
 // const accountController = require("./accountController");
 
-connectDB();
+// connectDB();
 
 const updateBlockEntry = async (block_number) => {
   let existingBlock = await Block.findOne({
