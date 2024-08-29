@@ -1,9 +1,11 @@
 const { Apis } = require("bitsharesjs-ws");
 const initializeWebSocket = require("../connectNode");
-const apiHelper = require("../routes/apiHelper");
 const getAssetBalance = require("../utils/updateRRCBalance");
 const Account = require("../models/Account");
 const accountController = require("../routes/accountController");
+const connectDB = require("../db");
+
+connectDB();
 
 async function connect() {
   await initializeWebSocket();
