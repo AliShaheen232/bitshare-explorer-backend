@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
 const { Apis } = require("bitsharesjs-ws");
-const initializeWebSocket = require("../connectNode");
+const connect = require("../connectNode");
 const connectDB = require("../db");
 const apiHelper = require("../routes/apiHelper");
 const Block = require("../models/Block");
@@ -11,28 +11,6 @@ const readFile = require("./readFile");
 
 connectDB();
 
-const maxRetries = 5;
-const reconnectInterval = 5000;
-
-const connect = async (retryCount = 0) => {
-  try {
-    await initializeWebSocket();
-    retryCount = 0;
-    console.log("Connected successfully.");
-  } catch (error) {
-    console.error(
-      `Connection failed. Attempt ${retryCount + 1} of ${maxRetries}`
-    );
-
-    if (retryCount < maxRetries) {
-      retryCount++;
-      await new Promise((resolve) => setTimeout(resolve, reconnectInterval));
-      await connect(retryCount);
-    } else {
-      throw new Error("Max retries reached. Unable to connect.");
-    }
-  }
-};
 const logFile = path.join(__dirname, "log_blockIndexer.log");
 
 const logError = (message) => {

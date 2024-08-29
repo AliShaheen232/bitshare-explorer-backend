@@ -1,34 +1,11 @@
 const { Apis } = require("bitsharesjs-ws");
-const initializeWebSocket = require("../connectNode");
+const connect = require("../connectNode");
 const getAssetBalance = require("../utils/updateRRCBalance");
 const Account = require("../models/Account");
 const accountController = require("../routes/accountController");
 const connectDB = require("../db");
 
 connectDB();
-
-const maxRetries = 5;
-const reconnectInterval = 5000;
-
-async function connect(retryCount = 0) {
-  try {
-    await initializeWebSocket();
-    retryCount = 0;
-    console.log("Connected successfully.");
-  } catch (error) {
-    console.error(
-      `Connection failed. Attempt ${retryCount + 1} of ${maxRetries}`
-    );
-
-    if (retryCount < maxRetries) {
-      retryCount++;
-      await new Promise((resolve) => setTimeout(resolve, reconnectInterval));
-      await connect(retryCount);
-    } else {
-      throw new Error("Max retries reached. Unable to connect.");
-    }
-  }
-}
 
 async function getAllAccountNames() {
   const accountNames = [];
