@@ -7,8 +7,27 @@ const connectDB = require("../db");
 
 connectDB();
 
-async function connect() {
-  await initializeWebSocket();
+const maxRetries = 5;
+const reconnectInterval = 5000;
+
+async function connect(retryCount = 0) {
+  try {
+    await initializeWebSocket();
+    retryCount = 0;
+    console.log("Connected successfully.");
+  } catch (error) {
+    console.error(
+      `Connection failed. Attempt ${retryCount + 1} of ${maxRetries}`
+    );
+
+    if (retryCount < maxRetries) {
+      retryCount++;
+      await new Promise((resolve) => setTimeout(resolve, reconnectInterval));
+      await connect(retryCount);
+    } else {
+      throw new Error("Max retries reached. Unable to connect.");
+    }
+  }
 }
 
 async function getAllAccountNames() {

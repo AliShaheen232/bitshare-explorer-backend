@@ -49,6 +49,8 @@ const parseObjectDetails = async (object) => {
       operation_data.asset_to_issue.asset_id === "1.3.1"
         ? "RRC"
         : operation_data.asset_to_issue.asset_id;
+    operation_data.asset_to_issue.amount =
+      operation_data.asset_to_issue.amount / Math.pow(10, assetPrecision);
   }
 
   if ("amount_to_reserve" in operation_data) {
@@ -56,6 +58,8 @@ const parseObjectDetails = async (object) => {
       operation_data.amount_to_reserve.asset_id === "1.3.1"
         ? "RRC"
         : operation_data.amount_to_reserve.asset_id;
+    operation_data.amount_to_reserve.amount =
+      operation_data.amount_to_reserve.amount / Math.pow(10, assetPrecision);
   }
 
   if ("issuer" in operation_data) {

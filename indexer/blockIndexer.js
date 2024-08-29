@@ -11,6 +11,28 @@ const readFile = require("./readFile");
 
 connectDB();
 
+const maxRetries = 5;
+const reconnectInterval = 5000;
+
+const connect = async (retryCount = 0) => {
+  try {
+    await initializeWebSocket();
+    retryCount = 0;
+    console.log("Connected successfully.");
+  } catch (error) {
+    console.error(
+      `Connection failed. Attempt ${retryCount + 1} of ${maxRetries}`
+    );
+
+    if (retryCount < maxRetries) {
+      retryCount++;
+      await new Promise((resolve) => setTimeout(resolve, reconnectInterval));
+      await connect(retryCount);
+    } else {
+      throw new Error("Max retries reached. Unable to connect.");
+    }
+  }
+};
 const logFile = path.join(__dirname, "log_blockIndexer.log");
 
 const logError = (message) => {
@@ -81,7 +103,6 @@ const indexing = async () => {
 const blockIndexer = async () => {
   try {
     logInfo(`DB syncing started`);
-    await initializeWebSocket();
     await _createOperationCountDoc();
     await indexing();
 
@@ -145,5 +166,13 @@ const findMissing = async () => {
   }
 };
 
+(async () => {
+  try {
+    await connect();
+    await blockIndexer();
+  } catch (error) {
+    console.error("Error:", error);
+  }
+})();
+
 // module.exports = blockindexer;
-blockIndexer();

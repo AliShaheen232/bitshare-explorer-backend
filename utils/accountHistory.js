@@ -1,6 +1,4 @@
 const { Apis } = require("bitsharesjs-ws");
-const { PublicKey } = require("bitsharesjs");
-const connectToBitShares = require("../connectNode");
 const { replaceBTSWithRR } = require("./converter");
 const getPublicKey = require("./getPublicKey");
 
@@ -36,6 +34,12 @@ async function fetchAccountHistory(accountId, limit) {
     if (item.op[1].amount && item.op[1].amount.asset_id) {
       assetIds.add(item.op[1].amount.asset_id);
     }
+    if (item.op[1].asset_to_issue && item.op[1].asset_to_issue.asset_id) {
+      assetIds.add(item.op[1].asset_to_issue.asset_id);
+    }
+    if (item.op[1].amount_to_reserve && item.op[1].amount_to_reserve.asset_id) {
+      assetIds.add(item.op[1].amount_to_reserve.asset_id);
+    }
     if (item.op[1].from) {
       accountIdsSet.add(item.op[1].from);
     }
@@ -59,8 +63,14 @@ async function fetchAccountHistory(accountId, limit) {
   const formattedHistory = await Promise.all(
     history.map(async (item) => {
       const feeAsset = item.op[1].fee && assetMap.get(item.op[1].fee.asset_id);
+      const issueAsset =
+        item.op[1].asset_to_issue &&
+        assetMap.get(item.op[1].asset_to_issue.asset_id);
       const amountAsset =
         item.op[1].amount && assetMap.get(item.op[1].amount.asset_id);
+      const amountReserve =
+        item.op[1].amount_to_reserve &&
+        assetMap.get(item.op[1].amount_to_reserve.asset_id);
       const fromAccount = item.op[1].from && accountMap.get(item.op[1].from);
       const toAccount = item.op[1].to && accountMap.get(item.op[1].to);
 
@@ -98,6 +108,28 @@ async function fetchAccountHistory(accountId, limit) {
                 asset_id: amountAsset
                   ? amountAsset.symbol
                   : item.op[1].amount.asset_id,
+              }
+            : {},
+          asset_to_issue: item.op[1].asset_to_issue
+            ? {
+                amount: issueAsset
+                  ? item.op[1].asset_to_issue.amount /
+                    Math.pow(10, issueAsset.precision)
+                  : item.op[1].asset_to_issue.amount,
+                asset_id: issueAsset
+                  ? issueAsset.symbol
+                  : item.op[1].asset_to_issue.asset_id,
+              }
+            : {},
+          amount_to_reserve: item.op[1].amount_to_reserve
+            ? {
+                amount: amountReserve
+                  ? item.op[1].amount_to_reserve.amount /
+                    Math.pow(10, amountReserve.precision)
+                  : item.op[1].amount_to_reserve.amount,
+                asset_id: amountReserve
+                  ? amountReserve.symbol
+                  : item.op[1].amount_to_reserve.asset_id,
               }
             : {},
           memo: memo,
