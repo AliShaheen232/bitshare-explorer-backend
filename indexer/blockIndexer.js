@@ -11,6 +11,9 @@ const readFile = require("./readFile");
 
 connectDB();
 
+const maxRetries = 9;
+let retryCount = 0;
+
 const logFile = path.join(__dirname, "log_blockIndexer.log");
 
 const logError = (message) => {
@@ -107,11 +110,28 @@ const blockIndexer = async () => {
       }
     }, 1000);
   } catch (error) {
-    // Log any errors that occur
-    logError(`Error in indexer function: ${error.message}`);
-    blockIndexer();
+    logError(`Error in indexer function: ${error.message} \n ${error.stack}`);
+
+    if (retryCount < maxRetries) {
+      retryCount++;
+      logInfo(`Retrying blockIndexer... Attempt ${retryCount}`);
+      setTimeout(blockIndexer, 9000);
+    } else {
+      logError("Max retries reached. Exiting blockIndexer.");
+      process.exit(1);
+    }
   }
 };
+
+(async () => {
+  try {
+    await connect();
+    await blockIndexer();
+  } catch (error) {
+    console.error("Error:", error);
+    process.exit(1); // Exit the process on initialization error
+  }
+})();
 
 const _createOperationCountDoc = async () => {
   let existingDoc = await OperationCount.findOne({});
