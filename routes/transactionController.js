@@ -211,7 +211,7 @@ const _refineTx = async (txObj) => {
 const getPaginatedTransactions = async (page, limit) => {
   const skip = (page - 1) * limit;
   const txs = await Transaction.find()
-    .sort({ createdAt: -1 })
+    .sort({ timestamp: -1 })
     .skip(skip)
     .limit(limit)
     .lean()
