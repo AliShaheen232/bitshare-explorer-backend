@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-require("dotenv").config();
 const { Apis } = require("bitsharesjs-ws");
 const connect = require("../connectNode");
 const connectDB = require("../db");
@@ -54,10 +53,6 @@ const latestBlock = async () => {
   }
 };
 
-const delay = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
 const indexing = async () => {
   let _heighestBlock;
   try {
@@ -91,24 +86,23 @@ const blockIndexer = async () => {
 
     logInfo(`DB syncing completed`);
 
-    logInfo(`Updating DB with new blocks`);
-
-    let _lastBlockNumber = 0;
-    setInterval(async () => {
-      try {
-        let currentBlockNumber = await latestBlock();
-        if (currentBlockNumber > _lastBlockNumber) {
-          await apiHelper.updateBlockEntry(currentBlockNumber);
-          _lastBlockNumber = currentBlockNumber;
-        } else {
-          console.log(
-            `setInterval ~ No new block. Current block number: ${currentBlockNumber}`
-          );
-        }
-      } catch (error) {
-        logError(`Error in setInterval: ${error.message}`);
-      }
-    }, 1000);
+    // logInfo(`Updating DB with new blocks`);
+    // let _lastBlockNumber = 0;
+    // setInterval(async () => {
+    //   try {
+    //     let currentBlockNumber = await latestBlock();
+    //     if (currentBlockNumber > _lastBlockNumber) {
+    //       await apiHelper.updateBlockEntry(currentBlockNumber);
+    //       _lastBlockNumber = currentBlockNumber;
+    //     } else {
+    //       console.log(
+    //         `setInterval ~ No new block. Current block number: ${currentBlockNumber}`
+    //       );
+    //     }
+    //   } catch (error) {
+    //     logError(`Error in setInterval: ${error.message}`);
+    //   }
+    // }, 1000);
   } catch (error) {
     logError(`Error in indexer function: ${error.message} \n ${error.stack}`);
 
@@ -157,7 +151,7 @@ const findMissing = async () => {
         await apiHelper.updateBlockEntry(_lowestBlock);
         console.log("findMissing ~ Missed Block updated", _lowestBlock);
       }
-      existingBlock = await Block.findOne({ block_number: _lowestBlock });
+      // existingBlock = await Block.findOne({ block_number: _lowestBlock });
     }
   } catch (error) {
     logError(`Error in findMissing: ${error.message}`);
