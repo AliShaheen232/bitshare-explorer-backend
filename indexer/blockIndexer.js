@@ -59,10 +59,10 @@ const delay = (ms) => {
 };
 
 const indexing = async () => {
+  let _heighestBlock;
   try {
     const _headBlockNumber = await latestBlock();
-    // let _heighestBlock = 90000;
-    let _heighestBlock = await heighestBlock();
+    _heighestBlock = await heighestBlock();
 
     logInfo(
       `Starting indexer with _heighestBlock: ${_heighestBlock}, _headBlockNumber: ${_headBlockNumber}`
@@ -164,13 +164,11 @@ const findMissing = async () => {
   }
 };
 
-(async () => {
-  try {
-    await connect();
-    await blockIndexer();
-  } catch (error) {
-    console.error("Error:", error);
-  }
-})();
-
-// module.exports = blockindexer;
+// (async () => {
+//   try {
+//     await connect();
+//     await blockIndexer();
+//   } catch (error) {
+//     console.error("Error:", error);
+//   }
+// })();
