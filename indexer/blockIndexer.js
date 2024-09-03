@@ -54,7 +54,7 @@ const latestBlock = async () => {
 };
 
 const indexing = async () => {
-  let _heighestBlock;
+  let _heighestBlock = 0;
   try {
     const _headBlockNumber = await latestBlock();
     _heighestBlock = await heighestBlock();
@@ -67,7 +67,6 @@ const indexing = async () => {
       await apiHelper.updateBlockEntry(_heighestBlock);
       console.log(`indexing ~ Updated block: ${_heighestBlock}`);
       readFile.writeToFile(_heighestBlock);
-      // await delay(0);
     }
     logInfo(`Initial loop ends: ${_heighestBlock}`);
   } catch (error) {

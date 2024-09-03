@@ -143,7 +143,7 @@ const refineBlock = (blockObj) => {
 const getPaginatedBlocks = async (page, limit) => {
   const skip = (page - 1) * limit;
   const blocks = await Block.find()
-    .sort({ createdAt: -1 })
+    .sort({ timestamp: -1 })
     .skip(skip)
     .limit(limit)
     .lean()
@@ -285,7 +285,6 @@ const fetchAssetHolders = async () => {
     throw error;
   }
 };
-
 
 module.exports = {
   updateBlockEntry,

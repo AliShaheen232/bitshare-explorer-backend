@@ -7,7 +7,7 @@ const BlockSchema = new mongoose.Schema({
   witness_signature: { type: String, required: true },
   transaction_merkle_root: { type: String, required: true },
   transaction_count: { type: Number, required: true },
-  timestamp: { type: String, required: true },
+  timestamp: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
