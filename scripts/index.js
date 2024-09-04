@@ -6,6 +6,7 @@ const txCount = require("./perDayTxCount");
 const witnesses = require("./witnessAndVotes");
 const topHolders = require("./topHolders");
 const blockTxsGraph = require("./blockTxsGraph");
+const txsGraph = require("./txsGraph");
 const connectDB = require("../db");
 
 connectDB();
@@ -31,6 +32,9 @@ wss.on("connection", async (ws, req) => {
       break;
     case "/blocksData":
       runBlockTxs(ws);
+      break;
+    case "/txsData":
+      runTxs(ws);
       break;
 
     default:
@@ -71,6 +75,12 @@ const runBlockTxs = async (ws) => {
       JSON.stringify({ task: "latestBlocksData", data: await blockTxsGraph() })
     );
   }, 3000);
+};
+
+const runTxs = async (ws) => {
+  setInterval(async () => {
+    ws.send(JSON.stringify({ task: "latestTxsData", data: await txsGraph() }));
+  }, 2000);
 };
 
 console.log(`WebSocket server is running on ws://localhost:${port}`);

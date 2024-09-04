@@ -143,7 +143,7 @@ const refineBlock = (blockObj) => {
 const getPaginatedBlocks = async (page, limit) => {
   const skip = (page - 1) * limit;
   const blocks = await Block.find()
-    .sort({ timestamp: -1 })
+    .sort({ block_number: -1 })
     .skip(skip)
     .limit(limit)
     .lean()
