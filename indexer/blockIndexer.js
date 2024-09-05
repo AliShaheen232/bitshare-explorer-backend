@@ -84,24 +84,6 @@ const blockIndexer = async () => {
     await findMissing();
 
     logInfo(`DB syncing completed`);
-
-    // logInfo(`Updating DB with new blocks`);
-    // let _lastBlockNumber = 0;
-    // setInterval(async () => {
-    //   try {
-    //     let currentBlockNumber = await latestBlock();
-    //     if (currentBlockNumber > _lastBlockNumber) {
-    //       await apiHelper.updateBlockEntry(currentBlockNumber);
-    //       _lastBlockNumber = currentBlockNumber;
-    //     } else {
-    //       console.log(
-    //         `setInterval ~ No new block. Current block number: ${currentBlockNumber}`
-    //       );
-    //     }
-    //   } catch (error) {
-    //     logError(`Error in setInterval: ${error.message}`);
-    //   }
-    // }, 1000);
   } catch (error) {
     logError(`Error in indexer function: ${error.message} \n ${error.stack}`);
 
@@ -138,7 +120,7 @@ const findMissing = async () => {
 
       if (!existingBlock) {
         await apiHelper.updateBlockEntry(_lowestBlock);
-        console.log("findMissing ~ Missed Block updated", _lowestBlock);
+        console.log("findMissing ~ Missed Block added", _lowestBlock);
       }
     }
     logInfo(`Missed blocks added in DB`);
