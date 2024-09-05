@@ -116,16 +116,6 @@ const blockIndexer = async () => {
   }
 };
 
-(async () => {
-  try {
-    await connect();
-    await blockIndexer();
-  } catch (error) {
-    console.error("Error:", error);
-    process.exit(1); // Exit the process on initialization error
-  }
-})();
-
 const _createOperationCountDoc = async () => {
   let existingDoc = await OperationCount.findOne({});
   if (!existingDoc) {
@@ -150,18 +140,19 @@ const findMissing = async () => {
         await apiHelper.updateBlockEntry(_lowestBlock);
         console.log("findMissing ~ Missed Block updated", _lowestBlock);
       }
-      // existingBlock = await Block.findOne({ block_number: _lowestBlock });
     }
+    logInfo(`Missed blocks added in DB`);
   } catch (error) {
     logError(`Error in findMissing: ${error.message}`);
   }
 };
 
-// (async () => {
-//   try {
-//     await connect();
-//     await blockIndexer();
-//   } catch (error) {
-//     console.error("Error:", error);
-//   }
-// })();
+(async () => {
+  try {
+    await connect();
+    await blockIndexer();
+  } catch (error) {
+    console.error("Error:", error);
+    process.exit(1); // Exit the process on initialization error
+  }
+})();
