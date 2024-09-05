@@ -85,12 +85,3 @@ const blockCrawler = async () => {
     process.exit(1); // Exit the process on initialization error
   }
 })();
-
-// (async () => {
-//   try {
-//     await connect();
-//     await blockCrawler();
-//   } catch (error) {
-//     console.error("Error:", error);
-//   }
-// })();
