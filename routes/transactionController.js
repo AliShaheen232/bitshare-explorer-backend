@@ -10,8 +10,6 @@ const computeTxHash = require("../utils/computeTxHash");
 const getAssetBalance = require("../utils/updateRRCBalance");
 const getPublicKey = require("../utils/getPublicKey");
 const accountController = require("./accountController");
-// const initializeWebSocket = require("../connectNode");
-// const { fetchAccountHistory } = require("../utils/accountHistory");
 
 // connectDB();
 
@@ -22,6 +20,9 @@ const updateTransactionEntry = async (transaction) => {
     transaction_hash = transaction.transaction_hash;
   } else {
     transaction_hash = computeTxHash(transaction);
+    console.log(
+      `TX_HASH: ${transaction_hash}, in BLOCK_NUMBER: ${block_number}`
+    );
   }
 
   const existingTransaction = await Transaction.findOne({

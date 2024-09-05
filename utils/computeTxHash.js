@@ -35,9 +35,7 @@ const sanitizeExtensions = (extensions) => {
   });
 };
 
-// Function to compute the transaction ID (hash) with 40-character length
 const computeTxHash = (transaction) => {
-  // Adjust the transaction to have the correct public key format and sanitize extensions
   transaction.operations.forEach((operation) => {
     convertKeys(operation[1]);
     if (operation[1].extensions) {
@@ -45,12 +43,11 @@ const computeTxHash = (transaction) => {
     }
   });
 
-  // Serialize the transaction
   const trBuffer = ops.transaction.toBuffer(transaction);
   const hash = crypto.createHash("sha256").update(trBuffer).digest("hex");
 
-  // Truncate to get a 40-character string
   const txHash = hash.slice(0, 40);
+  console.log("🚀 ~ computeTxHash ~ txHash:", txHash)
   return txHash;
 };
 
