@@ -89,7 +89,7 @@ const crawler = async () => {
       } catch (error) {
         logError(`Error in setInterval: ${error.message}`);
       }
-    }, 1000);
+    }, 2000);
   } catch (error) {
     logError(`Error in indexer function: ${error.message}`);
     if (retryCount < maxRetries) {
