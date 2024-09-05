@@ -46,6 +46,10 @@ const blockCrawler = async () => {
         let currentBlockNumber = await latestBlock();
         if (_lastBlockNumber < currentBlockNumber) {
           await apiHelper.updateBlockEntry(currentBlockNumber);
+          console.log(
+            "🚀 ~ setInterval ~ currentBlockNumber:",
+            currentBlockNumber
+          );
           _lastBlockNumber = currentBlockNumber;
         } else {
           console.log(
