@@ -23,7 +23,6 @@ const logInfo = (message) => {
   fs.appendFileSync(logFile, logMessage);
 };
 
-
 const latestBlock = async () => {
   try {
     const blockchain = await Apis.instance()

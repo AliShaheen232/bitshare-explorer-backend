@@ -20,19 +20,3 @@ const OperationCountSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("OperationCount", OperationCountSchema);
-
-// transfer: { type: Number, required: false },
-// account_create: { type: Number, required: false },
-// account_update: { type: Number, required: false },
-// account_upgrade: { type: Number, required: false },
-// asset_update_bitasset: { type: Number, required: false },
-// mining: { type: Number, required: false },
-// witness_update: { type: Number, required: false },
-// witness_create: { type: Number, required: false },
-// worker_create: { type: Number, required: false },
-// assert: { type: Number, required: false },
-// balance_claim: { type: Number, required: false },
-// override_transfer: { type: Number, required: false },
-// transfer_to_blind: { type: Number, required: false },
-// blind_transfer: { type: Number, required: false },
-// transfer_from_blind: { type: Number, required: false },
