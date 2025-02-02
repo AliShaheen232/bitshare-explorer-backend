@@ -1,7 +1,6 @@
 const { Apis } = require("bitsharesjs-ws");
 const connect = require("../connectNode");
 const connectDB = require("../db");
-// const transactionController = require("../routes/transactionController");
 const apiHelper = require("../routes/apiHelper");
 const fs = require("fs");
 const path = require("path");
@@ -35,38 +34,6 @@ const latestBlock = async () => {
     throw error;
   }
 };
-
-// const delay = (ms) => {
-//   return new Promise((resolve) => setTimeout(resolve, ms));
-// };
-
-// const getLatestTransactions = async (block_number) => {
-//   const block = await Apis.instance()
-//     .db_api()
-//     .exec("get_block", [block_number]);
-
-//   if (block == null) return null;
-
-//   let txs = [];
-//   if (Array.isArray(block.transactions)) {
-//     txCount = block.transactions.length;
-//     console.log(
-//       `Transaction indexer: block number is ${block_number} and transactions count are ${txCount}`
-//     );
-
-//     for (let i = 0; i < txCount; i++) {
-//       let tx = {
-//         block_number,
-//         timestamp: new Date(block.timestamp),
-//         ...block.transactions[i],
-//       };
-//       tx = await transactionController.updateTransactionEntry(tx);
-//       txs.push(tx);
-//     }
-//   }
-
-//   return txs;
-// };
 
 const crawler = async () => {
   try {
