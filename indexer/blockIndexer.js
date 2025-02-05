@@ -135,6 +135,6 @@ const findMissing = async () => {
     await blockIndexer();
   } catch (error) {
     console.error("Error:", error);
-    process.exit(1); // Exit the process on initialization error
+    process.exit(1);
   }
 })();
