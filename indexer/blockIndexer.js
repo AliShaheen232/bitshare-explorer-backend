@@ -8,12 +8,6 @@ const Block = require("../models/Block");
 const OperationCount = require("../models/OperationCount");
 const readFile = require("./readFile");
 
-/**
- * Block Indexer for BitShares Blockchain
- *
- * This script connects to the BitShares blockchain, fetches block data, and indexes it in a database.
- * It also identifies and indexes any missing blocks.
- */
 connectDB();
 
 const maxRetries = 9;
