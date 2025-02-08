@@ -49,7 +49,6 @@ const crawler = async () => {
 
           console.log(`Crawler: new block ${_lastBlockNumber} added in DB`);
 
-          // await getLatestTransactions(_lastBlockNumber);
         } else {
           console.log(`No new block. last block number: ${_lastBlockNumber}`);
         }
